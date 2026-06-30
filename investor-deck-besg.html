@@ -408,9 +408,16 @@ p.body {
   border: 1px solid var(--line);
   padding: 2rem 1.8rem;
   position: relative;
-  transition: border-color 0.3s;
+  background: linear-gradient(160deg, rgba(255,255,255,0.025), rgba(255,255,255,0));
+  border-radius: 5px;
+  transition: border-color 0.35s ease, transform 0.35s ease, box-shadow 0.35s ease, background 0.35s ease;
 }
-.club-card:hover { border-color: var(--gold-d); }
+.club-card:hover {
+  border-color: var(--gold);
+  transform: translateY(-6px);
+  box-shadow: 0 14px 36px rgba(0,0,0,0.45), 0 0 0 1px rgba(201,169,97,0.15);
+  background: linear-gradient(160deg, rgba(201,169,97,0.07), rgba(255,255,255,0));
+}
 
 .club-card::before {
   content: '';
@@ -419,7 +426,10 @@ p.body {
   left: 0;
   right: 0;
   height: 2px;
+  opacity: 0.55;
+  transition: opacity 0.35s ease;
 }
+.club-card:hover::before { opacity: 1; }
 .club-card.cole::before { background: linear-gradient(90deg, #002B5C, #C8102E); }
 .club-card.rubio::before { background: linear-gradient(90deg, #2d3e2c, var(--gold)); }
 .club-card.lito::before { background: linear-gradient(90deg, #C8102E, #1B2D5A); }
