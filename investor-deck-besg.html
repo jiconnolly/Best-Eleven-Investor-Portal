@@ -1010,6 +1010,9 @@ p.body {
      SLIDE 0 — COVER
      =========================== -->
 <section class="slide" id="s0" style="min-height:100vh;padding:0;display:flex;flex-direction:column;background:var(--bg);position:relative;overflow:hidden;">
+  <div onclick="reopenGate()" style="position:absolute;top:5.5rem;left:2rem;z-index:10;display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--ink-m);transition:color 0.2s ease;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--ink-m)'">
+    <span style="font-size:0.9rem;">&larr;</span> Back
+  </div>
   <div style="position:absolute;right:-8rem;top:50%;transform:translateY(-50%);opacity:0.04;pointer-events:none;z-index:0;"></div>
   <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),rgba(201,169,97,0.3),transparent);z-index:2;"></div>
   <div style="position:relative;z-index:1;display:flex;justify-content:space-between;align-items:center;padding:2.5rem 5rem;">
@@ -2143,90 +2146,123 @@ p.body {
 
 <section class="slide" id="s7">
   <div class="label">15 — The Ask</div>
+  <h2 class="display display-md" style="margin-bottom:1.2rem;">Two ways<br><span class="gold italic">to invest.</span></h2>
+  <p class="body" style="max-width:680px;margin-bottom:2.5rem;">Same clubs, same operating team, same scouting platform. Choose how much of the capital goes into real estate versus pure sporting performance. Both plans include $2M in flexible player-investment opportunities, deployed over two years.</p>
 
-  <div id="askToggle" style="display:inline-flex;gap:0.4rem;padding:0.3rem;background:rgba(255,255,255,0.03);border:1px solid var(--line);border-radius:30px;margin-bottom:2rem;">
-    <button class="ask-toggle-btn active" data-mode="full" onclick="setAskMode('full')" style="border:none;background:var(--gold);color:#101920;font-size:0.68rem;letter-spacing:0.08em;font-weight:600;padding:0.55rem 1.3rem;border-radius:24px;cursor:pointer;transition:all 0.25s ease;">Full Platform · $25M</button>
-    <button class="ask-toggle-btn" data-mode="sport" onclick="setAskMode('sport')" style="border:none;background:transparent;color:var(--ink-m);font-size:0.68rem;letter-spacing:0.08em;font-weight:600;padding:0.55rem 1.3rem;border-radius:24px;cursor:pointer;transition:all 0.25s ease;">Sporting Performance · $11M</button>
-  </div>
-  <div style="font-size:0.68rem;color:var(--ink-m);margin-top:0.7rem;margin-bottom:1.3rem;">Same operating team, scouting platform and governance across both plans, only the capital deployed changes.</div>
-
-  <div class="two-col" style="gap:5rem; align-items:start;">
-    <div>
-      <div class="ask-total" id="askTotalNum" data-full="$25M" data-sport="$11M">$25M</div>
-      <div class="ask-sub" id="askTotalSub" data-full="Total capital raise · USD" data-sport="Sporting-only raise · USD">Total capital raise · USD</div>
-
-      <div class="ask-breakdown">
-        <div class="ask-club">
-          <div class="ask-club-name">🇦🇷 Colegiales</div>
-          <div class="ask-line"><span class="ask-line-label">Squad budget (2 seasons)</span><span class="ask-line-val">$4M</span></div>
-          <div class="ask-line infra-line"><span class="ask-line-label">Stadium renovation</span><span class="ask-line-val">$1M</span></div>
-          <div class="ask-line infra-line"><span class="ask-line-label">Training facility &amp; land</span><span class="ask-line-val">$5M</span></div>
-          <div class="ask-line total-line"><span class="ask-line-label">Subtotal</span><span class="ask-line-val ask-subtotal" data-full="$10M" data-sport="$4M">$10M</span></div>
-        </div>
-        <div class="ask-club">
-          <div class="ask-club-name">🇵🇾 Rubio Ñu</div>
-          <div class="ask-line"><span class="ask-line-label">Squad budget (2 seasons)</span><span class="ask-line-val">$3M</span></div>
-          <div class="ask-line infra-line"><span class="ask-line-label">Training facility (BESG asset)</span><span class="ask-line-val">$3M</span></div>
-          <div class="ask-line total-line"><span class="ask-line-label">Subtotal</span><span class="ask-line-val ask-subtotal" data-full="$6M" data-sport="$3M">$6M</span></div>
-        </div>
-        <div class="ask-club">
-          <div class="ask-club-name">🇺🇾 Lito</div>
-          <div class="ask-line"><span class="ask-line-label">Squad budget (2 seasons)</span><span class="ask-line-val">$2M</span></div>
-          <div class="ask-line infra-line"><span class="ask-line-label">Land, facility &amp; stadium</span><span class="ask-line-val">$5M</span></div>
-          <div class="ask-line total-line"><span class="ask-line-label">Subtotal</span><span class="ask-line-val ask-subtotal" data-full="$7M" data-sport="$2M">$7M</span></div>
-        </div>
-      </div>
-      <div class="ask-club">
-        <div class="ask-club-header">💼 Founders</div>
-        <div class="ask-line"><span class="ask-line-label">Cash out, milestone-based</span><span class="ask-line-val">$2M cap</span></div>
-        <div style="font-size:0.68rem;color:rgba(255,255,255,0.45);padding:0.4rem 0 0.6rem;line-height:1.5;">Released only against sporting milestones: $300K per Copa Sudamericana qualification · $1M per Copa Libertadores qualification · until the $2M cap is reached. Founders get paid when the platform performs.</div>
-        <div class="ask-line total"><span class="ask-line-label">Subtotal</span><span class="ask-line-val">$2M</span></div>
-      </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;max-width:1100px;">
+    <div class="club-card" style="cursor:pointer;padding:2.2rem;" onclick="openAskDetail('full')">
+      <div style="font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:0.8rem;">Option A</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:2.6rem;font-weight:300;color:var(--ink);line-height:1;margin-bottom:0.5rem;">$27M</div>
+      <div style="font-size:1rem;color:var(--ink);font-weight:500;margin-bottom:0.8rem;">Full Platform</div>
+      <div style="font-size:0.85rem;color:var(--ink-m);line-height:1.6;">Squad budgets plus real estate: stadiums, training facilities and land, building permanent BESG assets across all three clubs.</div>
+      <div style="margin-top:1.3rem;font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);">View full breakdown &rarr;</div>
     </div>
-
-    <div>
-      <div class="ask-structure">
-        <div class="ask-struct-item">
-          <h4>Use of Funds</h4>
-          <p id="askUseOfFunds" data-full="Player acquisition, squad salaries and management agreements. Stadium and facility construction. Club operations and executive team across all markets." data-sport="Player acquisition, squad salaries and management agreements. Club operations and executive team across all markets. No capital allocated to real estate.">Player acquisition, squad salaries and management agreements. Stadium and facility construction. Club operations and executive team across all markets.</p>
-        </div>
-        <div class="ask-struct-item">
-          <h4>Investment Structure</h4>
-          <p><strong>Equity in Best Eleven Sports Group (BESG).</strong> Direct participation in the group holding entity, not individual clubs. Full upside across all assets, all markets, all exit paths.</p>
-        </div>
-        <div class="ask-struct-item">
-          <h4>Governance &amp; Asset Ownership</h4>
-          <p id="askGovernance">Full legal and contractual control of all clubs. Assembly-approved agreements in place. SAD structure in Uruguay. <strong>Facilities acquired or built by BESG are BESG assets</strong>, available to managed clubs under agreement but not club property. Exception: Colegiales stadium, which belongs to the club; BESG investment improves a shared asset.</p>
-        </div>
-        <div class="ask-struct-item">
-          <h4>Revenue Channels</h4>
-          <p id="askRevenueChannels">Player transfers · TV rights · Cup prizes · Sponsorships · Facility monetisation · Player representation · Scouting consulting · Group-level exit</p>
-        </div>
-      </div>
-
-      <div style="margin-top:2rem; padding:1.5rem; background:rgba(201,169,97,0.07); border:1px solid rgba(201,169,97,0.2);">
-        <div style="font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem;">Group Revenue Target</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:300;color:var(--gold);line-height:1;">$25M+</div>
-        <div style="font-size:0.75rem;color:var(--ink-m);margin-top:0.3rem;">Annual group revenue by 2031 across all clubs and verticals
-        </div>
-      </div>
-      <div id="askRealEstateBox" style="background:rgba(201,169,97,0.06);border:1px solid rgba(201,169,97,0.2);padding:1.5rem;margin-top:1.2rem;">
-        <div style="font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem;">Real Estate Income &amp; Appreciation</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:300;color:var(--gold);line-height:1;">$1M+/yr</div>
-        <div style="font-size:0.75rem;color:var(--ink-m);margin-top:0.3rem;">Facility rental income across owned assets, plus land and stadium appreciation, independent of sporting outcomes.</div>
-      </div>
-      <div style="background:rgba(201,169,97,0.06);border:1px solid rgba(201,169,97,0.25);border-radius:4px;padding:1.2rem 1.5rem;margin-top:1rem;">
-        <div style="font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem;">BESG Projected Value 2035</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:300;color:var(--gold);line-height:1;">$150M</div>
-        <div style="font-size:0.75rem;color:rgba(255,255,255,0.5);margin-top:0.4rem;">6x group revenue ($25M), in line with recent multi-club transaction multiples</div>
-      </div>
+    <div class="club-card" style="cursor:pointer;padding:2.2rem;" onclick="openAskDetail('sport')">
+      <div style="font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:0.8rem;">Option B</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:2.6rem;font-weight:300;color:var(--ink);line-height:1;margin-bottom:0.5rem;">$13M</div>
+      <div style="font-size:1rem;color:var(--ink);font-weight:500;margin-bottom:0.8rem;">Sporting Performance</div>
+      <div style="font-size:0.85rem;color:var(--ink-m);line-height:1.6;">Pure sporting capital: squad budgets and founder milestones only. No real estate investment.</div>
+      <div style="margin-top:1.3rem;font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);">View full breakdown &rarr;</div>
     </div>
   </div>
 </section>
 
 <!-- ===========================
-     SLIDE 8 — RETURNS
+     ASK DETAIL OVERLAY (fixed, opens on plan selection)
      =========================== -->
+<div id="askDetailOverlay" style="position:fixed;inset:0;z-index:4000;background:var(--bg);display:none;opacity:0;transition:opacity 0.3s ease;overflow-y:auto;">
+  <div style="max-width:1300px;margin:0 auto;padding:5.5rem 3rem 4rem;">
+    <div onclick="closeAskDetail()" style="display:inline-flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--ink-m);margin-bottom:2rem;transition:color 0.2s ease;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--ink-m)'">
+      <span style="font-size:0.9rem;">&larr;</span> Back to plans
+    </div>
+
+    <div id="askPlanLabel" style="font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:1.5rem;">Full Platform</div>
+
+    <div class="two-col" style="gap:5rem; align-items:start;">
+      <div>
+        <div class="ask-total" id="askTotalNum" data-full="$27M" data-sport="$13M">$27M</div>
+        <div class="ask-sub" id="askTotalSub" data-full="Total capital raise · USD" data-sport="Sporting-only raise · USD">Total capital raise · USD</div>
+
+        <div class="ask-breakdown">
+          <div class="ask-club">
+            <div class="ask-club-name">🇦🇷 Colegiales</div>
+            <div class="ask-line"><span class="ask-line-label">Squad budget (2 seasons)</span><span class="ask-line-val">$4M</span></div>
+            <div class="ask-line infra-line"><span class="ask-line-label">Stadium renovation</span><span class="ask-line-val">$1M</span></div>
+            <div class="ask-line infra-line"><span class="ask-line-label">Training facility &amp; land</span><span class="ask-line-val">$5M</span></div>
+            <div class="ask-line total-line"><span class="ask-line-label">Subtotal</span><span class="ask-line-val ask-subtotal" data-full="$10M" data-sport="$4M">$10M</span></div>
+          </div>
+          <div class="ask-club">
+            <div class="ask-club-name">🇵🇾 Rubio Ñu</div>
+            <div class="ask-line"><span class="ask-line-label">Squad budget (2 seasons)</span><span class="ask-line-val">$3M</span></div>
+            <div class="ask-line infra-line"><span class="ask-line-label">Training facility (BESG asset)</span><span class="ask-line-val">$3M</span></div>
+            <div class="ask-line total-line"><span class="ask-line-label">Subtotal</span><span class="ask-line-val ask-subtotal" data-full="$6M" data-sport="$3M">$6M</span></div>
+          </div>
+          <div class="ask-club">
+            <div class="ask-club-name">🇺🇾 Lito</div>
+            <div class="ask-line"><span class="ask-line-label">Squad budget (2 seasons)</span><span class="ask-line-val">$2M</span></div>
+            <div class="ask-line infra-line"><span class="ask-line-label">Land, facility &amp; stadium</span><span class="ask-line-val">$5M</span></div>
+            <div class="ask-line total-line"><span class="ask-line-label">Subtotal</span><span class="ask-line-val ask-subtotal" data-full="$7M" data-sport="$2M">$7M</span></div>
+          </div>
+        </div>
+        <div class="ask-club">
+          <div class="ask-club-header">&#9917; Player Investment Opportunities</div>
+          <div class="ask-line"><span class="ask-line-label">Deployed over 2 years, across any club</span><span class="ask-line-val">$2M</span></div>
+          <div style="font-size:0.68rem;color:rgba(255,255,255,0.45);padding:0.4rem 0 0.6rem;line-height:1.5;">Flexible acquisition capital, not tied to a single club. Buy in one market, develop, and sell from whichever club maximises value.</div>
+          <div class="ask-line total"><span class="ask-line-label">Subtotal</span><span class="ask-line-val">$2M</span></div>
+        </div>
+        <div class="ask-club">
+          <div class="ask-club-header">💼 Founders</div>
+          <div class="ask-line"><span class="ask-line-label">Cash out, milestone-based</span><span class="ask-line-val">$2M cap</span></div>
+          <div style="font-size:0.68rem;color:rgba(255,255,255,0.45);padding:0.4rem 0 0.6rem;line-height:1.5;">Released only against sporting milestones: $300K per Copa Sudamericana qualification · $1M per Copa Libertadores qualification · until the $2M cap is reached. Founders get paid when the platform performs.</div>
+          <div class="ask-line total"><span class="ask-line-label">Subtotal</span><span class="ask-line-val">$2M</span></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="ask-structure">
+          <div class="ask-struct-item">
+            <h4>Use of Funds</h4>
+            <p id="askUseOfFunds">Player acquisition, squad salaries and management agreements. Stadium and facility construction. Club operations and executive team across all markets.</p>
+          </div>
+          <div class="ask-struct-item">
+            <h4>Investment Structure</h4>
+            <p><strong>Equity in Best Eleven Sports Group (BESG).</strong> Direct participation in the group holding entity, not individual clubs. Full upside across all assets, all markets, all exit paths.</p>
+          </div>
+          <div class="ask-struct-item">
+            <h4>Governance &amp; Asset Ownership</h4>
+            <p id="askGovernance">Full legal and contractual control of all clubs. Assembly-approved agreements in place. SAD structure in Uruguay. <strong>Facilities acquired or built by BESG are BESG assets</strong>, available to managed clubs under agreement but not club property. Exception: Colegiales stadium, which belongs to the club; BESG investment improves a shared asset.</p>
+          </div>
+          <div class="ask-struct-item">
+            <h4>Revenue Channels</h4>
+            <p id="askRevenueChannels">Player transfers · TV rights · Cup prizes · Sponsorships · Facility monetisation · Player representation · Player investment returns · Scouting consulting · Group-level exit</p>
+          </div>
+        </div>
+
+        <div style="margin-top:2rem; padding:1.5rem; background:rgba(201,169,97,0.07); border:1px solid rgba(201,169,97,0.2);">
+          <div style="font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem;">Group Revenue Target</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:300;color:var(--gold);line-height:1;">$25M+</div>
+          <div style="font-size:0.75rem;color:var(--ink-m);margin-top:0.3rem;">Annual group revenue by 2031 across all clubs and verticals</div>
+        </div>
+        <div style="background:rgba(201,169,97,0.06);border:1px solid rgba(201,169,97,0.2);padding:1.5rem;margin-top:1.2rem;">
+          <div style="font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem;">Additional Return · Player Investments</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:300;color:var(--gold);line-height:1;">+$4M</div>
+          <div style="font-size:0.75rem;color:var(--ink-m);margin-top:0.3rem;">Projected proceeds from the $2M player-investment pool, on top of each club's own sales pipeline.</div>
+        </div>
+        <div id="askRealEstateBox" style="background:rgba(201,169,97,0.06);border:1px solid rgba(201,169,97,0.2);padding:1.5rem;margin-top:1.2rem;">
+          <div style="font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem;">Real Estate Income &amp; Appreciation</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:300;color:var(--gold);line-height:1;">$1M+/yr</div>
+          <div style="font-size:0.75rem;color:var(--ink-m);margin-top:0.3rem;">Facility rental income across owned assets, plus land and stadium appreciation, independent of sporting outcomes.</div>
+        </div>
+        <div style="background:rgba(201,169,97,0.06);border:1px solid rgba(201,169,97,0.25);border-radius:4px;padding:1.2rem 1.5rem;margin-top:1rem;">
+          <div style="font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem;">BESG Projected Value 2035</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:300;color:var(--gold);line-height:1;">$150M</div>
+          <div style="font-size:0.75rem;color:rgba(255,255,255,0.5);margin-top:0.4rem;">6x group revenue ($25M), in line with recent multi-club transaction multiples</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <section class="slide" id="s8">
   <div class="label">16 — Value Creation &amp; Returns</div>
 
@@ -2367,6 +2403,21 @@ p.body {
     setTimeout(() => { if (gate) gate.style.display = 'none'; }, 500);
   }
 
+  function reopenGate() {
+    const gate = document.getElementById('entryGate');
+    if (!gate) return;
+    gate.classList.remove('kicked', 'gate-hidden');
+    gate.style.display = 'flex';
+    gate.style.opacity = '1';
+    const ball = document.getElementById('gateB11');
+    if (ball) ball.style.animation = 'none';
+    const flash = document.getElementById('gateFlash');
+    if (flash) flash.style.animation = 'none';
+    document.body.classList.add('gate-active');
+    window.scrollTo(0, 0);
+    gateClicked = false;
+  }
+
   let gateClicked = false;
   function playKickAndEnter() {
     if (gateClicked) return;
@@ -2383,12 +2434,6 @@ p.body {
     });
     document.querySelectorAll('.infra-line').forEach(el => {
       el.style.display = (mode === 'sport') ? 'none' : 'flex';
-    });
-    document.querySelectorAll('.ask-toggle-btn').forEach(btn => {
-      const isActive = btn.getAttribute('data-mode') === mode;
-      btn.classList.toggle('active', isActive);
-      btn.style.background = isActive ? 'var(--gold)' : 'transparent';
-      btn.style.color = isActive ? '#101920' : 'var(--ink-m)';
     });
 
     const uof = document.getElementById('askUseOfFunds');
@@ -2408,14 +2453,36 @@ p.body {
     const rev = document.getElementById('askRevenueChannels');
     if (rev) {
       rev.textContent = (mode === 'sport')
-        ? 'Player transfers · TV rights · Cup prizes · Sponsorships · Player representation · Scouting consulting · Group-level exit'
-        : 'Player transfers · TV rights · Cup prizes · Sponsorships · Facility monetisation · Player representation · Scouting consulting · Group-level exit';
+        ? 'Player transfers · TV rights · Cup prizes · Sponsorships · Player representation · Player investment returns · Scouting consulting · Group-level exit'
+        : 'Player transfers · TV rights · Cup prizes · Sponsorships · Facility monetisation · Player representation · Player investment returns · Scouting consulting · Group-level exit';
     }
 
     const realEstateBox = document.getElementById('askRealEstateBox');
     if (realEstateBox) {
       realEstateBox.style.display = (mode === 'sport') ? 'none' : 'block';
     }
+
+    const planLabel = document.getElementById('askPlanLabel');
+    if (planLabel) {
+      planLabel.textContent = (mode === 'sport') ? 'Sporting Performance' : 'Full Platform';
+    }
+  }
+
+  function openAskDetail(mode) {
+    const overlay = document.getElementById('askDetailOverlay');
+    if (!overlay) return;
+    setAskMode(mode);
+    overlay.style.display = 'block';
+    requestAnimationFrame(() => { overlay.style.opacity = '1'; });
+    document.body.classList.add('gate-active');
+  }
+
+  function closeAskDetail() {
+    const overlay = document.getElementById('askDetailOverlay');
+    if (!overlay) return;
+    overlay.style.opacity = '0';
+    document.body.classList.remove('gate-active');
+    setTimeout(() => { overlay.style.display = 'none'; }, 300);
   }
 
   const observer = new IntersectionObserver((entries) => {
