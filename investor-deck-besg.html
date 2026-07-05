@@ -2050,30 +2050,6 @@ p.body {
     </div>
   </div>
 
-  <div class="two-col" style="gap:4rem;margin-top:2rem;">
-    <div>
-      <div style="font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:0.9rem;">Ownership &amp; Valuation</div>
-      <div class="club-kpi">
-        <div class="kpi-row"><span style="color:var(--ink-m);">Pre-money valuation</span><span style="color:var(--ink);">$10M</span></div>
-        <div class="kpi-row"><span style="color:var(--ink-m);">Growth-equity in</span><span style="color:var(--ink);">$9M</span></div>
-        <div class="kpi-row"><span style="color:var(--ink-m);">Post-money (equity)</span><span style="color:var(--ink);">$19M</span></div>
-        <div class="kpi-row" style="border-bottom:none;"><span style="color:var(--ink);font-weight:600;">Investor stake</span><span style="color:var(--gold);font-weight:600;">~47%</span></div>
-      </div>
-      <div style="font-size:0.78rem;line-height:1.55;color:var(--ink-m);margin-top:0.5rem;">Entry below the ~$14M aggregate squad value already built, vs. 4–6x revenue at multi-club exit. Founders retain 53% and remain fully aligned.</div>
-    </div>
-    <div>
-      <div style="font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:0.9rem;">Modelled Return on Equity</div>
-      <div style="padding:1.2rem;background:rgba(201,169,97,0.05);border:1px solid rgba(201,169,97,0.2);border-radius:4px;margin-bottom:1rem;">
-        <div style="display:flex;justify-content:space-between;align-items:baseline;"><span style="font-size:0.85rem;color:var(--ink);">Target · $150M value 2035</span><span style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--gold);">~7.8x</span></div>
-        <div style="font-size:0.76rem;color:var(--ink-m);margin-top:0.3rem;">47% = ~$70M · ~24% IRR over 9 yrs</div>
-      </div>
-      <div style="padding:1.2rem;background:rgba(255,255,255,0.02);border:1px solid var(--line);border-radius:4px;">
-        <div style="display:flex;justify-content:space-between;align-items:baseline;"><span style="font-size:0.85rem;color:var(--ink);">Conservative · $100M value</span><span style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--ink);">~5.2x</span></div>
-        <div style="font-size:0.76rem;color:var(--ink-m);margin-top:0.3rem;">47% = ~$47M · ~18% IRR · plus secured real-asset upside</div>
-      </div>
-    </div>
-  </div>
-  <div style="margin-top:1.5rem;font-size:0.7rem;line-height:1.6;color:var(--ink-m);border-top:1px solid var(--line);padding-top:1rem;max-width:1050px;">Valuation bridge: $150M reflects ~6× group revenue at exit (target ~$22M by 2031, growing through 2035), in line with recent multi-club transaction multiples. The $14M real-asset tranche carries its own appreciation and rental income ($1M+/yr) independent of sporting outcomes.</div>
 </section>
 
 <section class="slide" id="suof">
@@ -2145,6 +2121,7 @@ p.body {
     <button class="ask-toggle-btn active" data-mode="full" onclick="setAskMode('full')" style="border:none;background:var(--gold);color:#101920;font-size:0.68rem;letter-spacing:0.08em;font-weight:600;padding:0.55rem 1.3rem;border-radius:24px;cursor:pointer;transition:all 0.25s ease;">Full Platform · $25M</button>
     <button class="ask-toggle-btn" data-mode="sport" onclick="setAskMode('sport')" style="border:none;background:transparent;color:var(--ink-m);font-size:0.68rem;letter-spacing:0.08em;font-weight:600;padding:0.55rem 1.3rem;border-radius:24px;cursor:pointer;transition:all 0.25s ease;">Sporting Performance · $11M</button>
   </div>
+  <div style="font-size:0.68rem;color:var(--ink-m);margin-top:0.7rem;margin-bottom:1.3rem;">Same operating team, scouting platform and governance across both plans, only the capital deployed changes.</div>
 
   <div class="two-col" style="gap:5rem; align-items:start;">
     <div>
@@ -2184,7 +2161,7 @@ p.body {
       <div class="ask-structure">
         <div class="ask-struct-item">
           <h4>Use of Funds</h4>
-          <p>Player acquisition, squad salaries and management agreements. Stadium and facility construction. Club operations and executive team across all markets.</p>
+          <p id="askUseOfFunds" data-full="Player acquisition, squad salaries and management agreements. Stadium and facility construction. Club operations and executive team across all markets." data-sport="Player acquisition, squad salaries and management agreements. Club operations and executive team across all markets. No capital allocated to real estate.">Player acquisition, squad salaries and management agreements. Stadium and facility construction. Club operations and executive team across all markets.</p>
         </div>
         <div class="ask-struct-item">
           <h4>Investment Structure</h4>
@@ -2192,11 +2169,11 @@ p.body {
         </div>
         <div class="ask-struct-item">
           <h4>Governance &amp; Asset Ownership</h4>
-          <p>Full legal and contractual control of all clubs. Assembly-approved agreements in place. SAD structure in Uruguay. <strong>Facilities acquired or built by BESG are BESG assets</strong>, available to managed clubs under agreement but not club property. Exception: Colegiales stadium, which belongs to the club; BESG investment improves a shared asset.</p>
+          <p id="askGovernance">Full legal and contractual control of all clubs. Assembly-approved agreements in place. SAD structure in Uruguay. <strong>Facilities acquired or built by BESG are BESG assets</strong>, available to managed clubs under agreement but not club property. Exception: Colegiales stadium, which belongs to the club; BESG investment improves a shared asset.</p>
         </div>
         <div class="ask-struct-item">
           <h4>Revenue Channels</h4>
-          <p>Player transfers · TV rights · Cup prizes · Sponsorships · Facility monetisation · Player representation · Scouting consulting · Group-level exit</p>
+          <p id="askRevenueChannels">Player transfers · TV rights · Cup prizes · Sponsorships · Facility monetisation · Player representation · Scouting consulting · Group-level exit</p>
         </div>
       </div>
 
@@ -2205,6 +2182,11 @@ p.body {
         <div style="font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:300;color:var(--gold);line-height:1;">$25M+</div>
         <div style="font-size:0.75rem;color:var(--ink-m);margin-top:0.3rem;">Annual group revenue by 2031 across all clubs and verticals
         </div>
+      </div>
+      <div id="askRealEstateBox" style="background:rgba(201,169,97,0.06);border:1px solid rgba(201,169,97,0.2);padding:1.5rem;margin-top:1.2rem;">
+        <div style="font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem;">Real Estate Income &amp; Appreciation</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:300;color:var(--gold);line-height:1;">$1M+/yr</div>
+        <div style="font-size:0.75rem;color:var(--ink-m);margin-top:0.3rem;">Facility rental income across owned assets, plus land and stadium appreciation, independent of sporting outcomes.</div>
       </div>
       <div style="background:rgba(201,169,97,0.06);border:1px solid rgba(201,169,97,0.25);border-radius:4px;padding:1.2rem 1.5rem;margin-top:1rem;">
         <div style="font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem;">BESG Projected Value 2035</div>
@@ -2364,6 +2346,32 @@ p.body {
       btn.style.background = isActive ? 'var(--gold)' : 'transparent';
       btn.style.color = isActive ? '#101920' : 'var(--ink-m)';
     });
+
+    const uof = document.getElementById('askUseOfFunds');
+    if (uof) {
+      uof.textContent = (mode === 'sport')
+        ? 'Player acquisition, squad salaries and management agreements. Club operations and executive team across all markets. No capital allocated to real estate.'
+        : 'Player acquisition, squad salaries and management agreements. Stadium and facility construction. Club operations and executive team across all markets.';
+    }
+
+    const gov = document.getElementById('askGovernance');
+    if (gov) {
+      gov.innerHTML = (mode === 'sport')
+        ? 'Full legal and contractual control of all clubs. Assembly-approved agreements in place. SAD structure in Uruguay. Same operating team and scouting platform as the Full Platform plan, no real estate involved.'
+        : 'Full legal and contractual control of all clubs. Assembly-approved agreements in place. SAD structure in Uruguay. <strong>Facilities acquired or built by BESG are BESG assets</strong>, available to managed clubs under agreement but not club property. Exception: Colegiales stadium, which belongs to the club; BESG investment improves a shared asset.';
+    }
+
+    const rev = document.getElementById('askRevenueChannels');
+    if (rev) {
+      rev.textContent = (mode === 'sport')
+        ? 'Player transfers · TV rights · Cup prizes · Sponsorships · Player representation · Scouting consulting · Group-level exit'
+        : 'Player transfers · TV rights · Cup prizes · Sponsorships · Facility monetisation · Player representation · Scouting consulting · Group-level exit';
+    }
+
+    const realEstateBox = document.getElementById('askRealEstateBox');
+    if (realEstateBox) {
+      realEstateBox.style.display = (mode === 'sport') ? 'none' : 'block';
+    }
   }
 
   const observer = new IntersectionObserver((entries) => {
