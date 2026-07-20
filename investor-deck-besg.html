@@ -1079,7 +1079,7 @@ section.fx-in::before{opacity:1;}
 
 /* ---------- GATE WORLD MAP (french blue) ---------- */
 #gateWorld{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
-  width:min(120vmin,1150px);height:min(120vmin,1150px);
+  width:min(118vmin,1120px);height:min(118vmin,1120px);
   z-index:0;pointer-events:none;opacity:1;transition:opacity .5s ease;}
 #gateWorld canvas{width:100%;height:100%;display:block;}
 #entryGate.kicked #gateWorld{opacity:0;transform:translate(-50%,-50%) scale(1.06);
@@ -2836,8 +2836,11 @@ section.fx-in::before{opacity:1;}
       var ball=document.getElementById('gateB11');
       if(!ball) return;
       var rct=ball.getBoundingClientRect();
-      radarWrap.style.left=(rct.left+rct.width/2)+'px';
-      radarWrap.style.top=(rct.top+rct.height/2)+'px';
+      var mx=(rct.left+rct.width/2), my=(rct.top+rct.height/2);
+      radarWrap.style.left=mx+'px';
+      radarWrap.style.top=my+'px';
+      var wr=document.getElementById('gateWorld');
+      if(wr){ wr.style.left=mx+'px'; wr.style.top=my+'px'; }
     }
     placeRadar();
     addEventListener('resize', placeRadar);
