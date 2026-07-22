@@ -969,13 +969,13 @@ p.body {
   60% {transform:scale(4.2) rotate(2deg);opacity:1;filter:blur(3px) brightness(1.7);}
   100%{transform:scale(13) rotate(0deg);opacity:0;filter:blur(14px) brightness(2);}
 }
-#entryGate.kicked #gateB11{animation:fxBallKick2 .85s cubic-bezier(.32,0,.08,1) forwards !important;}
+#entryGate.kicked #gateB11{animation:none !important;opacity:0;transition:opacity .38s ease;}
 @keyframes fxHaloOut{to{opacity:0;transform:translate(-50%,-50%) scale(1.6)}}
 /* shockwave rings */
 .fx-ring{position:absolute;top:50%;left:50%;border-radius:50%;pointer-events:none;
   transform:translate(-50%,-50%) scale(.2);opacity:0;z-index:1;
   border:2px solid rgba(226,196,122,.9);}
-#entryGate.kicked .fx-ring{animation:fxRing .9s cubic-bezier(.2,.6,.2,1) forwards;}
+#entryGate.kicked .fx-ring{animation:none;opacity:0;}
 #entryGate.kicked .fx-ring:nth-child(2){animation-delay:.1s;border-color:rgba(201,169,97,.6);}
 #entryGate.kicked .fx-ring:nth-child(3){animation-delay:.22s;border-width:1px;border-color:rgba(240,234,216,.45);}
 @keyframes fxRing{
@@ -986,7 +986,7 @@ p.body {
 .fx-spark{position:absolute;top:50%;left:50%;width:5px;height:5px;border-radius:50%;
   background:var(--gold-b);opacity:0;pointer-events:none;z-index:2;
   box-shadow:0 0 8px rgba(226,196,122,.9);}
-#entryGate.kicked .fx-spark{animation:fxSpark .95s cubic-bezier(.15,.6,.3,1) forwards;}
+#entryGate.kicked .fx-spark{animation:none;opacity:0;}
 @keyframes fxSpark{
   0%{transform:translate(-50%,-50%) translate(0,0) scale(1);opacity:1}
   100%{transform:translate(-50%,-50%) translate(var(--dx),var(--dy)) scale(.15);opacity:0}}
@@ -1069,8 +1069,7 @@ section.fx-in::before{opacity:1;}
 #gateRadar{position:absolute;pointer-events:none;z-index:0;opacity:.6;
   transform:translate(-50%,-50%);transition:opacity .5s ease;}
 #gateRadar svg{width:min(135vmin,1250px);height:min(135vmin,1250px);display:block;overflow:visible;}
-#entryGate.kicked #gateRadar{opacity:0;transform:translate(-50%,-50%) scale(1.14);
-  transition:opacity .45s ease,transform .6s ease;}
+#entryGate.kicked #gateRadar{opacity:0;transition:opacity .5s ease;}
 #radarSweep{transform-origin:380px 380px;animation:fxRadarSweep 9s linear infinite;}
 @keyframes fxRadarSweep{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion: reduce){
@@ -1082,8 +1081,7 @@ section.fx-in::before{opacity:1;}
   width:min(118vmin,1120px);height:min(118vmin,1120px);
   z-index:0;pointer-events:none;opacity:1;transition:opacity .5s ease;}
 #gateWorld canvas{width:100%;height:100%;display:block;}
-#entryGate.kicked #gateWorld{opacity:0;transform:translate(-50%,-50%) scale(1.06);
-  transition:opacity .4s ease,transform .55s ease;}
+#entryGate.kicked #gateWorld{opacity:1;}
 @media (max-width:760px){#gateWorld img{width:150vw;max-width:none;}}
 
 /* ---------- WARP transition canvas ---------- */
@@ -1231,8 +1229,8 @@ section.fx-in::before{opacity:1;}
     0%, 15% { opacity: 1; transform: translateY(0); }
     100% { opacity: 0; transform: translateY(-8px); }
   }
-  #entryGate.kicked #gateB11 { animation: ballKick 0.62s cubic-bezier(.3,0,.1,1) forwards; }
-  #entryGate.kicked #gateFlash { animation: kickFlash 0.5s ease-out forwards; }
+  #entryGate.kicked #gateB11 { animation: none; }
+  #entryGate.kicked #gateFlash { animation: none; opacity: 0; }
   #entryGate.kicked .gate-copy { animation: textFadeOut 0.4s ease forwards; }
   #entryGate.kicked { pointer-events: none; }
 </style>
@@ -3186,6 +3184,33 @@ window.GATE_PTS=[62.1,31.4,0,62.6,33.2,0,63.0,35.1,0,64.8,30.3,0,64.9,32.9,0,64.
       var phi=(90-lat)*Math.PI/180, th=(lon+180)*Math.PI/180;
       vx[i]=-Math.sin(phi)*Math.cos(th); vy[i]=Math.cos(phi); vz[i]=Math.sin(phi)*Math.sin(th);
     }
+    // our four cities — BESG gold markers
+    var CITY=[[-58.4,-34.6],[-57.6,-25.3],[-56.2,-34.9],[-80.2,25.8]];
+    var cx3=new Float32Array(4), cy3=new Float32Array(4), cz3=new Float32Array(4);
+    for(var q=0;q<4;q++){
+      var clon=CITY[q][0], clat=CITY[q][1];
+      var cphi=(90-clat)*Math.PI/180, cth=(clon+180)*Math.PI/180;
+      cx3[q]=-Math.sin(cphi)*Math.cos(cth); cy3[q]=Math.cos(cphi); cz3[q]=Math.sin(cphi)*Math.sin(cth);
+    }
+    function drawCities(cs,sn,scale,fade){
+      for(var q=0;q<4;q++){
+        var x=cx3[q], y=cy3[q], z=cz3[q];
+        var x1=x*cs+z*sn, z1=-x*sn+z*cs;
+        var y2=y*C1 - z1*S1, z2=y*S1 + z1*C1;
+        if(z2<-0.1) continue;                                  // hidden behind the globe
+        var vis=Math.max(0,Math.min(1,(z2+0.1)/0.45))*fade;
+        if(vis<=0.01) continue;
+        var px=cx + x1*R*scale, py=cy - y2*R*scale;
+        var rad=3.1*DPR*(1+(scale-1)*0.55);
+        var g=ctx.createRadialGradient(px,py,0,px,py,rad*3.4);
+        g.addColorStop(0,'rgba(201,169,97,'+(0.95*vis)+')');
+        g.addColorStop(0.45,'rgba(201,169,97,'+(0.30*vis)+')');
+        g.addColorStop(1,'rgba(201,169,97,0)');
+        ctx.fillStyle=g; ctx.beginPath(); ctx.arc(px,py,rad*3.4,0,6.2832); ctx.fill();
+        ctx.fillStyle='rgba(228,203,142,'+vis+')';
+        ctx.beginPath(); ctx.arc(px,py,rad,0,6.2832); ctx.fill();
+      }
+    }
     var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     // explosion state
     var boom=false, boomT=0, BOOM_MS=1400;
@@ -3229,6 +3254,7 @@ window.GATE_PTS=[62.1,31.4,0,62.6,33.2,0,63.0,35.1,0,64.8,30.3,0,64.9,32.9,0,64.
           else    { ctx.fillStyle='rgba(110,178,248,'+a+')'; }
           ctx.beginPath(); ctx.arc(px,py,size,0,6.2832); ctx.fill();
         }
+        drawCities(cs,sn,1+be*2.2,1-bp*0.65);
         requestAnimationFrame(frame); return;
       }
       spin -= 0.0050;             // rotate America -> Europe (east)
@@ -3254,6 +3280,7 @@ window.GATE_PTS=[62.1,31.4,0,62.6,33.2,0,63.0,35.1,0,64.8,30.3,0,64.9,32.9,0,64.
         else    { ctx.fillStyle='rgba(95,160,235,'+a+')'; }
         ctx.beginPath(); ctx.arc(px,py,size,0,6.2832); ctx.fill();
       }
+      drawCities(cs,sn,1,1);
       requestAnimationFrame(frame);
     }
     requestAnimationFrame(frame);
