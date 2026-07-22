@@ -3217,7 +3217,7 @@ window.GATE_PTS=[62.1,31.4,0,62.6,33.2,0,63.0,35.1,0,64.8,30.3,0,64.9,32.9,0,64.
         }
         requestAnimationFrame(frame); return;
       }
-      if(!reduce) spin -= 0.0050;             // rotate America -> Europe (east)
+      spin -= 0.0050;             // rotate America -> Europe (east)
       var cs=Math.cos(spin), sn=Math.sin(spin);
       // faint sphere haze
       var g=ctx.createRadialGradient(cx,cy,R*0.2,cx,cy,R*1.15);
