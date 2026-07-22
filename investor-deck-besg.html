@@ -2988,10 +2988,8 @@ section.fx-in::before{opacity:1;}
   window.playKickAndEnter = function(){
     if (fxClicked) return; fxClicked=true;
     if (gate) gate.classList.add('kicked');
-    if (!reduced){
-      if (window.__gateBoom) setTimeout(function(){ window.__gateBoom(); }, 40);
-      setTimeout(function(){ document.body.classList.add('fx-flash'); }, 300);
-    }
+    if (window.__gateBoom) setTimeout(function(){ window.__gateBoom(); }, 40);
+    setTimeout(function(){ document.body.classList.add('fx-flash'); }, 430);
     setTimeout(function(){
       var g=document.getElementById('entryGate');
       if (g) g.classList.add('gate-hidden');
@@ -3001,7 +2999,7 @@ section.fx-in::before{opacity:1;}
       setTimeout(function(){ if(g) g.style.display='none'; }, 500);
       setTimeout(function(){ document.body.classList.remove('fx-enter','fx-flash'); }, 1800);
       showHint();
-    }, reduced ? 60 : 820);
+    }, 940);
   };
   var origReopen = window.reopenGate;
   window.reopenGate = function(){
@@ -3202,17 +3200,22 @@ window.GATE_PTS=[62.1,31.4,0,62.6,33.2,0,63.0,35.1,0,64.8,30.3,0,64.9,32.9,0,64.
       ctx.clearRect(0,0,cv.width,cv.height);
       if(boom){
         var bp=Math.min((performance.now()-boomT)/BOOM_MS,1);
-        var be=bp*bp;                         // accelerating outward
-        var reach=Math.max(cv.width,cv.height);
+        var be=bp*bp;                          // outward blast (delayed, accelerating)
+        spin -= 0.0050 + 0.42*bp;              // wheel-spin: accelerates from the first frame
+        var cs=Math.cos(spin), sn=Math.sin(spin);
         for(var i=0;i<N;i++){
-          var dist=be*reach*(0.5+spd[i]*0.9);
-          var px=cx + Math.cos(ang[i])*dist;
-          var py=cy + Math.sin(ang[i])*dist - elev[i]*dist*0.3;
+          // keep the sphere projection so the planet stays a planet while it spins
+          var x=vx[i], y=vy[i], z=vz[i];
+          var x1=x*cs+z*sn, z1=-x*sn+z*cs;
+          var y2=y*C1 - z1*S1, z2=y*S1 + z1*C1;
+          var f=1+be*(1.5+spd[i]*3.2);         // blow the shell outward
+          var px=cx + x1*R*f, py=cy - y2*R*f;
+          var depth=(z2+1)/2;
           var isSA=sa[i];
-          var size=(isSA?2.1:1.6)*DPR*(1+be*3.5);
-          var a=(isSA?1.0:0.85)*(1-bp*0.55);
-          if(isSA){ ctx.fillStyle='rgba(170,210,255,'+a+')'; }
-          else    { ctx.fillStyle='rgba(110,175,245,'+a+')'; }
+          var size=(isSA?2.1:1.6)*DPR*(0.6+depth*0.8)*(1+be*3.0);
+          var a=(isSA?1.0:0.9)*(0.5+depth*0.6)*(1-bp*0.45);
+          if(isSA){ ctx.fillStyle='rgba(170,212,255,'+a+')'; }
+          else    { ctx.fillStyle='rgba(110,178,248,'+a+')'; }
           ctx.beginPath(); ctx.arc(px,py,size,0,6.2832); ctx.fill();
         }
         requestAnimationFrame(frame); return;
