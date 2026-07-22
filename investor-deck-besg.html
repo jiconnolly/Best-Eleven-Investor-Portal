@@ -1077,8 +1077,7 @@ section.fx-in::before{opacity:1;}
 }
 
 /* ---------- GATE WORLD MAP (french blue) ---------- */
-#gateWorld{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
-  width:min(118vmin,1120px);height:min(118vmin,1120px);
+#gateWorld{position:fixed;inset:0;left:0;top:0;transform:none;width:100vw;height:100vh;
   z-index:0;pointer-events:none;opacity:1;transition:opacity .5s ease;}
 #gateWorld canvas{width:100%;height:100%;display:block;}
 #entryGate.kicked #gateWorld{opacity:1;}
@@ -2848,8 +2847,7 @@ section.fx-in::before{opacity:1;}
       var mx=(rct.left+rct.width/2), my=(rct.top+rct.height/2);
       radarWrap.style.left=mx+'px';
       radarWrap.style.top=my+'px';
-      var wr=document.getElementById('gateWorld');
-      if(wr){ wr.style.left=mx+'px'; wr.style.top=my+'px'; }
+      if(window.__placeGlobeCenter) window.__placeGlobeCenter();
     }
     placeRadar();
     addEventListener('resize', placeRadar);
@@ -3222,13 +3220,21 @@ window.GATE_PTS=[62.1,31.4,0,62.6,33.2,0,63.0,35.1,0,64.8,30.3,0,64.9,32.9,0,64.
       for(var k=0;k<n;k++){ spd[k]=0.6+Math.random()*1.9; ang[k]=Math.random()*6.2832; elev[k]=(Math.random()-0.5)*1.3; }
     };
     var DPR=Math.min(window.devicePixelRatio||1,2), W=0,H=0,R=0,cx=0,cy=0;
+    function placeGlobeCenter(){
+      var ball=document.getElementById('gateB11');
+      if(ball){ var b=ball.getBoundingClientRect(); cx=(b.left+b.width/2)*DPR; cy=(b.top+b.height/2)*DPR; }
+      else { cx=cv.width/2; cy=cv.height/2; }
+    }
+    window.__placeGlobeCenter=placeGlobeCenter;
     function resize(){
-      var r=wrap.getBoundingClientRect();
-      W=Math.max(r.width,300); H=Math.max(r.height,300);
-      cv.width=W*DPR; cv.height=H*DPR; cx=W*DPR/2; cy=H*DPR/2;
-      R=Math.min(W,H)*DPR*0.46;
+      W=Math.max(window.innerWidth,300); H=Math.max(window.innerHeight,300);
+      cv.width=W*DPR; cv.height=H*DPR;
+      R=Math.min(Math.min(W,H),1150)*DPR*0.46;
+      placeGlobeCenter();
     }
     resize(); window.addEventListener('resize',resize);
+    setTimeout(function(){ placeGlobeCenter(); }, 120);
+    setTimeout(function(){ placeGlobeCenter(); }, 500);
     // orient so South America faces camera initially, tilt a touch
     var tilt=-0.30, spin=Math.PI*0.15;
     var C1=Math.cos(tilt), S1=Math.sin(tilt);
