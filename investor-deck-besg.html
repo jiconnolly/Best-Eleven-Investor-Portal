@@ -3174,13 +3174,22 @@ window.GATE_PTS=[62.1,31.4,0,62.6,33.2,0,63.0,35.1,0,64.8,30.3,0,64.9,32.9,0,64.
     cv.style.cssText='display:block;width:100%;height:100%;';
     wrap.appendChild(cv);
     var ctx=cv.getContext('2d');
-    var pts=window.GATE_PTS, N=pts.length/3;
-    // precompute unit vectors on sphere
-    var vx=new Float32Array(N), vy=new Float32Array(N), vz=new Float32Array(N), sa=new Uint8Array(N);
-    for(var i=0;i<N;i++){
-      var lon=pts[i*3], lat=pts[i*3+1]; sa[i]=pts[i*3+2];
-      var phi=(90-lat)*Math.PI/180, th=(lon+180)*Math.PI/180;
-      vx[i]=-Math.sin(phi)*Math.cos(th); vy[i]=Math.cos(phi); vz[i]=Math.sin(phi)*Math.sin(th);
+    var pts=window.GATE_PTS, N0=pts.length/3;
+    // densify: each source point spawns DENS dots (original + jittered neighbours)
+    var DENS=(window.innerWidth<820 ? 2 : 3), N=N0*DENS;   // lighter on phones
+    var vx=new Float32Array(N), vy=new Float32Array(N), vz=new Float32Array(N),
+        sa=new Uint8Array(N), sz=new Float32Array(N);
+    var kk=0;
+    for(var i=0;i<N0;i++){
+      var blon=pts[i*3], blat=pts[i*3+1], bsa=pts[i*3+2];
+      for(var d=0;d<DENS;d++){
+        var lon=blon+(d?(Math.random()-0.5)*1.6:0);
+        var lat=blat+(d?(Math.random()-0.5)*1.6:0);
+        var phi=(90-lat)*Math.PI/180, th=(lon+180)*Math.PI/180;
+        vx[kk]=-Math.sin(phi)*Math.cos(th); vy[kk]=Math.cos(phi); vz[kk]=Math.sin(phi)*Math.sin(th);
+        sa[kk]=bsa; sz[kk]= d ? (0.58+Math.random()*0.34) : 1;
+        kk++;
+      }
     }
     // our four cities — BESG gold markers
     var CITY=[[-58.4,-34.6],[-57.6,-25.3],[-56.2,-34.9],[-80.2,25.8]];
@@ -3189,6 +3198,87 @@ window.GATE_PTS=[62.1,31.4,0,62.6,33.2,0,63.0,35.1,0,64.8,30.3,0,64.9,32.9,0,64.
       var clon=CITY[q][0], clat=CITY[q][1];
       var cphi=(90-clat)*Math.PI/180, cth=(clon+180)*Math.PI/180;
       cx3[q]=-Math.sin(cphi)*Math.cos(cth); cy3[q]=Math.cos(cphi); cz3[q]=Math.sin(cphi)*Math.sin(cth);
+    }
+    // ---- lat/long graticule (gives the rotation a readable frame) ----
+    function projPt(lon,lat,cs,sn,scale){
+      var phi=(90-lat)*Math.PI/180, th=(lon+180)*Math.PI/180;
+      var x=-Math.sin(phi)*Math.cos(th), y=Math.cos(phi), z=Math.sin(phi)*Math.sin(th);
+      var x1=x*cs+z*sn, z1=-x*sn+z*cs;
+      var y2=y*C1 - z1*S1, z2=y*S1 + z1*C1;
+      return [cx + x1*R*scale, cy - y2*R*scale, z2];
+    }
+    function strokeArcLine(coords,cs,sn,scale,side){
+      ctx.beginPath(); var started=false;
+      for(var t=0;t<coords.length;t++){
+        var p=projPt(coords[t][0],coords[t][1],cs,sn,scale);
+        var vis = side>0 ? (p[2]>=0) : (p[2]<0);
+        if(!vis){ started=false; continue; }
+        if(!started){ ctx.moveTo(p[0],p[1]); started=true; } else { ctx.lineTo(p[0],p[1]); }
+      }
+      ctx.stroke();
+    }
+    function drawGraticule(cs,sn,scale,fade,side){
+      if(fade<=0.01) return;
+      var base = side>0 ? 0.15 : 0.055;
+      ctx.lineWidth=(side>0?0.9:0.7)*DPR;
+      ctx.strokeStyle='rgba(150,190,250,'+(base*fade)+')';
+      var lon,lat,pl;
+      for(lon=-180; lon<180; lon+=30){
+        pl=[]; for(lat=-78; lat<=78; lat+=6) pl.push([lon,lat]);
+        strokeArcLine(pl,cs,sn,scale,side);
+      }
+      for(lat=-60; lat<=60; lat+=30){
+        if(lat===0) continue;
+        pl=[]; for(lon=-180; lon<=180; lon+=6) pl.push([lon,lat]);
+        strokeArcLine(pl,cs,sn,scale,side);
+      }
+      // equator, a touch brighter
+      ctx.strokeStyle='rgba(180,210,255,'+((side>0?0.24:0.08)*fade)+')';
+      pl=[]; for(lon=-180; lon<=180; lon+=6) pl.push([lon,0]);
+      strokeArcLine(pl,cs,sn,scale,side);
+    }
+    // ---- atmosphere ----
+    function drawHalo(scale,fade){
+      var r=R*scale;
+      var g2=ctx.createRadialGradient(cx,cy,0,cx,cy,r*1.34);
+      g2.addColorStop(0,'rgba(120,175,255,0)');
+      g2.addColorStop(0.60,'rgba(110,168,252,0)');
+      g2.addColorStop(0.746,'rgba(125,180,255,'+(0.15*fade)+')');   // right at the limb
+      g2.addColorStop(0.86,'rgba(80,140,235,'+(0.055*fade)+')');
+      g2.addColorStop(1,'rgba(55,115,215,0)');
+      ctx.fillStyle=g2; ctx.beginPath(); ctx.arc(cx,cy,r*1.34,0,6.2832); ctx.fill();
+    }
+    function drawLimb(scale,fade){
+      var r=R*scale;
+      ctx.lineWidth=1.7*DPR;
+      var g3=ctx.createLinearGradient(cx-r,cy-r*0.7,cx+r,cy+r*0.9);
+      g3.addColorStop(0,'rgba(198,224,255,'+(0.42*fade)+')');
+      g3.addColorStop(0.48,'rgba(140,190,255,'+(0.20*fade)+')');
+      g3.addColorStop(1,'rgba(80,140,235,'+(0.07*fade)+')');
+      ctx.strokeStyle=g3;
+      ctx.beginPath(); ctx.arc(cx,cy,r*0.995,0,6.2832); ctx.stroke();
+    }
+    // ---- particles, split by hemisphere so depth reads correctly ----
+    function drawPoints(cs,sn,side,scale,fade,be){
+      scale=scale||1; fade=(fade===undefined?1:fade); be=be||0;
+      for(var i=0;i<N;i++){
+        var x=vx[i], y=vy[i], z=vz[i];
+        var x1=x*cs+z*sn, z1=-x*sn+z*cs;
+        var y2=y*C1 - z1*S1, z2=y*S1 + z1*C1;
+        if(side>0 ? (z2<0) : (z2>=0)) continue;
+        var depth=(z2+1)/2;
+        var f = be ? (1+be*(1.5+spd[i]*3.2)) : scale;
+        var px=cx + x1*R*f, py=cy - y2*R*f;
+        var isSA=sa[i];
+        var size=(isSA?2.0:1.5)*DPR*sz[i]*(0.55+depth*0.85)*(1+be*3.0);
+        var a;
+        if(z2>=0){ a=(isSA?1.0:0.9)*(0.42+depth*0.66); }
+        else     { a=(isSA?0.28:0.16)*(0.25+depth*0.55); }
+        a*=fade;
+        ctx.fillStyle = isSA ? 'rgba(150,195,255,'+a+')' : 'rgba(95,160,235,'+a+')';
+        var s2=size*1.772;                    // equal-area square: much cheaper than arc()
+        ctx.fillRect(px-s2*0.5, py-s2*0.5, s2, s2);
+      }
     }
     function drawCities(cs,sn,scale,fade){
       for(var q=0;q<4;q++){
@@ -3245,6 +3335,9 @@ window.GATE_PTS=[62.1,31.4,0,62.6,33.2,0,63.0,35.1,0,64.8,30.3,0,64.9,32.9,0,64.
         var be=bp*bp;                          // outward blast (delayed, accelerating)
         spin -= 0.0050 + 0.30*bp;              // wheel-spin: accelerates from the first frame
         var cs=Math.cos(spin), sn=Math.sin(spin);
+        var gf=Math.max(0,1-bp*2.6);           // graticule dies fast once it blows
+        drawHalo(1+be*1.4, Math.max(0,1-bp*0.9));
+        if(gf>0.01){ drawGraticule(cs,sn,1+be*0.6,gf,-1); drawGraticule(cs,sn,1+be*0.6,gf,1); }
         for(var i=0;i<N;i++){
           // keep the sphere projection so the planet stays a planet while it spins
           var x=vx[i], y=vy[i], z=vz[i];
@@ -3254,12 +3347,14 @@ window.GATE_PTS=[62.1,31.4,0,62.6,33.2,0,63.0,35.1,0,64.8,30.3,0,64.9,32.9,0,64.
           var px=cx + x1*R*f, py=cy - y2*R*f;
           var depth=(z2+1)/2;
           var isSA=sa[i];
-          var size=(isSA?2.1:1.6)*DPR*(0.6+depth*0.8)*(1+be*3.0);
+          var size=(isSA?2.0:1.5)*DPR*sz[i]*(0.6+depth*0.8)*(1+be*3.0);
           var a=(isSA?1.0:0.9)*(0.5+depth*0.6)*(1-bp*0.45);
           if(isSA){ ctx.fillStyle='rgba(170,212,255,'+a+')'; }
           else    { ctx.fillStyle='rgba(110,178,248,'+a+')'; }
-          ctx.beginPath(); ctx.arc(px,py,size,0,6.2832); ctx.fill();
+          var bs=size*1.772;
+          ctx.fillRect(px-bs*0.5, py-bs*0.5, bs, bs);
         }
+        drawLimb(1+be*1.4, Math.max(0,1-bp*1.15));
         drawCities(cs,sn,1+be*2.2,1-bp*0.65);
         requestAnimationFrame(frame); return;
       }
@@ -3271,21 +3366,12 @@ window.GATE_PTS=[62.1,31.4,0,62.6,33.2,0,63.0,35.1,0,64.8,30.3,0,64.9,32.9,0,64.
       g.addColorStop(0.7,'rgba(20,60,120,0.05)');
       g.addColorStop(1,'rgba(8,20,45,0)');
       ctx.fillStyle=g; ctx.beginPath(); ctx.arc(cx,cy,R*1.12,0,6.2832); ctx.fill();
-      for(var i=0;i<N;i++){
-        var x=vx[i], y=vy[i], z=vz[i];
-        var x1=x*cs+z*sn, z1=-x*sn+z*cs;
-        var y2=y*C1 - z1*S1, z2=y*S1 + z1*C1;
-        var depth=(z2+1)/2;
-        var px=cx + x1*R, py=cy - y2*R;
-        var isSA=sa[i];
-        var size=(isSA?2.1:1.6)*DPR*(0.6+depth*0.8);
-        var a;
-        if(z2>=0){ a=(isSA?1.0:0.9)*(0.5+depth*0.6); }
-        else     { a=(isSA?0.42:0.26)*(0.3+depth*0.6); }
-        if(isSA){ ctx.fillStyle='rgba(150,195,255,'+a+')'; }
-        else    { ctx.fillStyle='rgba(95,160,235,'+a+')'; }
-        ctx.beginPath(); ctx.arc(px,py,size,0,6.2832); ctx.fill();
-      }
+      drawHalo(1,1);
+      drawGraticule(cs,sn,1,1,-1);   // far side
+      drawPoints(cs,sn,-1,1,1,0);
+      drawGraticule(cs,sn,1,1,1);    // near side
+      drawPoints(cs,sn,1,1,1,0);
+      drawLimb(1,1);
       drawCities(cs,sn,1,1);
       requestAnimationFrame(frame);
     }
