@@ -3255,6 +3255,67 @@ window.GATE_PTS=[62.1,31.4,0,62.6,33.2,0,63.0,35.1,0,64.8,30.3,0,64.9,32.9,0,64.
       var d = size * SPR_SCALE;
       ctx.drawImage(isSA ? SPR_SA[bi] : SPR_W[bi], px - d*0.5, py - d*0.5, d, d);
     }
+    // ---- scattered player silhouettes across South America ----
+    // spread over the continent, deliberately away from the four gold club cities
+    var PLAYERS = [
+      [-74.1,   4.7],   // Colombia
+      [-66.9,  10.5],   // Venezuela
+      [-78.5,  -0.2],   // Ecuador
+      [-77.0, -12.0],   // Peru
+      [-63.2, -17.8],   // Bolivia
+      [-35.9,  -8.1],   // Brazil (northeast)
+      [-46.6, -23.5],   // Brazil (southeast)
+      [-70.6, -33.4],   // Chile
+      [-64.2, -31.4]    // Argentina (interior)
+    ];
+    var plvx=new Float32Array(PLAYERS.length), plvy=new Float32Array(PLAYERS.length), plvz=new Float32Array(PLAYERS.length);
+    for (var q0=0; q0<PLAYERS.length; q0++){
+      var plon=PLAYERS[q0][0], plat=PLAYERS[q0][1];
+      var pphi=(90-plat)*Math.PI/180, pth=(plon+180)*Math.PI/180;
+      plvx[q0]=-Math.sin(pphi)*Math.cos(pth); plvy[q0]=Math.cos(pphi); plvz[q0]=Math.sin(pphi)*Math.sin(pth);
+    }
+    var PLY_SPR = null;
+    function playerSprite(){
+      if (PLY_SPR) return PLY_SPR;
+      var W=48, H=64, c=document.createElement('canvas'); c.width=W; c.height=H;
+      var x=c.getContext('2d'), M=W/2;
+      x.fillStyle='rgb(208,230,255)';
+      x.beginPath(); x.arc(M, 10, 7, 0, 6.2832); x.fill();                    // head
+      x.beginPath();                                                           // torso
+      x.moveTo(M-9,23); x.quadraticCurveTo(M,18,M+9,23);
+      x.lineTo(M+7,41); x.lineTo(M-7,41); x.closePath(); x.fill();
+      x.beginPath();                                                           // left arm
+      x.moveTo(M-9,24); x.lineTo(M-16,39); x.lineTo(M-11.5,40.5); x.lineTo(M-5.5,27); x.closePath(); x.fill();
+      x.beginPath();                                                           // right arm
+      x.moveTo(M+9,24); x.lineTo(M+16,39); x.lineTo(M+11.5,40.5); x.lineTo(M+5.5,27); x.closePath(); x.fill();
+      x.beginPath();                                                           // left leg
+      x.moveTo(M-7,41); x.lineTo(M-9.5,61); x.lineTo(M-3.5,61); x.lineTo(M-1,43); x.closePath(); x.fill();
+      x.beginPath();                                                           // right leg
+      x.moveTo(M+7,41); x.lineTo(M+9.5,61); x.lineTo(M+3.5,61); x.lineTo(M+1,43); x.closePath(); x.fill();
+      PLY_SPR=c; return c;
+    }
+    function drawPlayers(cs,sn,scale,fade){
+      if (fade<=0.02) return;
+      var spr=playerSprite();
+      var ph=Math.max(R*0.036, 13*DPR), pw=ph*0.75;      // readable height on any screen
+      for (var q=0; q<PLAYERS.length; q++){
+        var x=plvx[q], y=plvy[q], z=plvz[q];
+        var x1=x*cs+z*sn, z1=-x*sn+z*cs;
+        var y2=y*C1 - z1*S1, z2=y*S1 + z1*C1;
+        if (z2 < -0.02) continue;                        // behind the globe
+        var vis=Math.max(0,Math.min(1,(z2+0.02)/0.42))*fade;
+        if (vis<=0.02) continue;
+        var sx=cx + x1*R*scale, sy=cy - y2*R*scale;
+        var gy=sy-ph*0.42;
+        var gg=ctx.createRadialGradient(sx,gy,0,sx,gy,ph*0.9);
+        gg.addColorStop(0,'rgba(160,205,255,'+(0.30*vis)+')');
+        gg.addColorStop(1,'rgba(160,205,255,0)');
+        ctx.fillStyle=gg; ctx.beginPath(); ctx.arc(sx,gy,ph*0.9,0,6.2832); ctx.fill();
+        ctx.globalAlpha=vis*0.92;
+        ctx.drawImage(spr, sx-pw*0.5, sy-ph, pw, ph);
+        ctx.globalAlpha=1;
+      }
+    }
     // ---- lat/long graticule (gives the rotation a readable frame) ----
     function projPt(lon,lat,cs,sn,scale){
       var phi=(90-lat)*Math.PI/180, th=(lon+180)*Math.PI/180;
@@ -3406,6 +3467,7 @@ window.GATE_PTS=[62.1,31.4,0,62.6,33.2,0,63.0,35.1,0,64.8,30.3,0,64.9,32.9,0,64.
           blit(px, py, size, a, isSA);
         }
         drawLimb(1+be*1.4, Math.max(0,1-bp*1.15));
+        drawPlayers(cs,sn,1+be*2.2, Math.max(0,1-bp*1.35));
         drawCities(cs,sn,1+be*2.2,1-bp*0.65);
         requestAnimationFrame(frame); return;
       }
@@ -3423,6 +3485,7 @@ window.GATE_PTS=[62.1,31.4,0,62.6,33.2,0,63.0,35.1,0,64.8,30.3,0,64.9,32.9,0,64.
       drawGraticule(cs,sn,1,1,1);    // near side
       drawPoints(cs,sn,1,1,1,0);
       drawLimb(1,1);
+      drawPlayers(cs,sn,1,1);
       drawCities(cs,sn,1,1);
       requestAnimationFrame(frame);
     }
