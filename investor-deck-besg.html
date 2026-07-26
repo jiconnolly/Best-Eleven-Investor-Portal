@@ -3281,41 +3281,43 @@ window.GATE_PTS=[62.1,31.4,0,62.6,33.2,0,63.0,35.1,0,64.8,30.3,0,64.9,32.9,0,64.
     var PLY_SPR = null;
     function playerSprite(){
       if (PLY_SPR) return PLY_SPR;
-      var W=48, H=64, c=document.createElement('canvas'); c.width=W; c.height=H;
+      var W=32, H=44, c=document.createElement('canvas'); c.width=W; c.height=H;
       var x=c.getContext('2d'), M=W/2;
-      x.fillStyle='rgb(208,230,255)';
-      x.beginPath(); x.arc(M, 10, 7, 0, 6.2832); x.fill();                    // head
-      x.beginPath();                                                           // torso
-      x.moveTo(M-9,23); x.quadraticCurveTo(M,18,M+9,23);
-      x.lineTo(M+7,41); x.lineTo(M-7,41); x.closePath(); x.fill();
-      x.beginPath();                                                           // left arm
-      x.moveTo(M-9,24); x.lineTo(M-16,39); x.lineTo(M-11.5,40.5); x.lineTo(M-5.5,27); x.closePath(); x.fill();
-      x.beginPath();                                                           // right arm
-      x.moveTo(M+9,24); x.lineTo(M+16,39); x.lineTo(M+11.5,40.5); x.lineTo(M+5.5,27); x.closePath(); x.fill();
-      x.beginPath();                                                           // left leg
-      x.moveTo(M-7,41); x.lineTo(M-9.5,61); x.lineTo(M-3.5,61); x.lineTo(M-1,43); x.closePath(); x.fill();
-      x.beginPath();                                                           // right leg
-      x.moveTo(M+7,41); x.lineTo(M+9.5,61); x.lineTo(M+3.5,61); x.lineTo(M+1,43); x.closePath(); x.fill();
+      x.fillStyle='rgb(236,246,255)';
+      x.lineCap='round'; x.lineJoin='round';
+      x.beginPath(); x.arc(M, 7, 5.2, 0, 6.2832); x.fill();          // head
+      x.lineWidth=4.2;                                                // arms
+      x.strokeStyle='rgb(236,246,255)';
+      x.beginPath(); x.moveTo(M-4,16); x.lineTo(M-9,25); x.stroke();
+      x.beginPath(); x.moveTo(M+4,16); x.lineTo(M+9,25); x.stroke();
+      x.beginPath();                                                  // torso (solid mass)
+      x.moveTo(M-6,15); x.quadraticCurveTo(M,12.5,M+6,15);
+      x.lineTo(M+5,27); x.lineTo(M-5,27); x.closePath(); x.fill();
+      x.lineWidth=4.6;                                                // legs
+      x.beginPath(); x.moveTo(M-3,26); x.lineTo(M-5,41); x.stroke();
+      x.beginPath(); x.moveTo(M+3,26); x.lineTo(M+5,41); x.stroke();
       PLY_SPR=c; return c;
     }
     function drawPlayers(cs,sn,scale,fade){
       if (fade<=0.02) return;
       var spr=playerSprite();
-      var ph=Math.max(R*0.036, 13*DPR), pw=ph*0.75;      // readable height on any screen
+      var ph=Math.max(R*0.055, 20*DPR), pw=ph*(32/44);
       for (var q=0; q<PLAYERS.length; q++){
         var x=plvx[q], y=plvy[q], z=plvz[q];
         var x1=x*cs+z*sn, z1=-x*sn+z*cs;
         var y2=y*C1 - z1*S1, z2=y*S1 + z1*C1;
-        if (z2 < -0.02) continue;                        // behind the globe
+        if (z2 < -0.02) continue;
         var vis=Math.max(0,Math.min(1,(z2+0.02)/0.42))*fade;
         if (vis<=0.02) continue;
         var sx=cx + x1*R*scale, sy=cy - y2*R*scale;
-        var gy=sy-ph*0.42;
-        var gg=ctx.createRadialGradient(sx,gy,0,sx,gy,ph*0.9);
-        gg.addColorStop(0,'rgba(160,205,255,'+(0.30*vis)+')');
-        gg.addColorStop(1,'rgba(160,205,255,0)');
-        ctx.fillStyle=gg; ctx.beginPath(); ctx.arc(sx,gy,ph*0.9,0,6.2832); ctx.fill();
-        ctx.globalAlpha=vis*0.92;
+        var my=sy-ph*0.5;
+        // dark backdrop so the figure separates from the dot field
+        var bg=ctx.createRadialGradient(sx,my,0,sx,my,ph*0.78);
+        bg.addColorStop(0,'rgba(5,11,20,'+(0.80*vis)+')');
+        bg.addColorStop(0.62,'rgba(5,11,20,'+(0.55*vis)+')');
+        bg.addColorStop(1,'rgba(5,11,20,0)');
+        ctx.fillStyle=bg; ctx.beginPath(); ctx.arc(sx,my,ph*0.78,0,6.2832); ctx.fill();
+        ctx.globalAlpha=vis;
         ctx.drawImage(spr, sx-pw*0.5, sy-ph, pw, ph);
         ctx.globalAlpha=1;
       }
