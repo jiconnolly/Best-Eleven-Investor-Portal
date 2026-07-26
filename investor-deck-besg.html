@@ -3199,6 +3199,62 @@ window.GATE_PTS=[62.1,31.4,0,62.6,33.2,0,63.0,35.1,0,64.8,30.3,0,64.9,32.9,0,64.
       var cphi=(90-clat)*Math.PI/180, cth=(clon+180)*Math.PI/180;
       cx3[q]=-Math.sin(cphi)*Math.cos(cth); cy3[q]=Math.cos(cphi); cz3[q]=Math.sin(cphi)*Math.sin(cth);
     }
+    // ---- pre-rendered dot sprites (round + homogeneous, and cheaper than arc()) ----
+    // GLYPH: 'dot' | 'ball' | 'person'
+    var GLYPH = (window.GATE_GLYPH || 'dot');
+    var SPR_N = 7, SPR_PX = 28;
+    function makeSprite(rgb, alpha, kind){
+      var c = document.createElement('canvas'); c.width = c.height = SPR_PX;
+      var x = c.getContext('2d'), M = SPR_PX/2;
+      if (kind === 'person'){
+        x.fillStyle = 'rgba('+rgb+','+alpha+')';
+        var hr = SPR_PX*0.15;                                  // head
+        x.beginPath(); x.arc(M, SPR_PX*0.24, hr, 0, 6.2832); x.fill();
+        x.beginPath();                                          // torso + legs
+        x.moveTo(M-SPR_PX*0.19, SPR_PX*0.92);
+        x.lineTo(M-SPR_PX*0.17, SPR_PX*0.52);
+        x.quadraticCurveTo(M, SPR_PX*0.36, M+SPR_PX*0.17, SPR_PX*0.52);
+        x.lineTo(M+SPR_PX*0.19, SPR_PX*0.92);
+        x.closePath(); x.fill();
+      } else if (kind === 'ball'){
+        x.fillStyle = 'rgba('+rgb+','+alpha+')';
+        x.beginPath(); x.arc(M, M, M*0.86, 0, 6.2832); x.fill();
+        x.globalCompositeOperation = 'destination-out';         // pentagon cut-outs
+        x.fillStyle = 'rgba(0,0,0,0.55)';
+        x.beginPath(); x.arc(M, M, M*0.26, 0, 6.2832); x.fill();
+        for (var k=0;k<5;k++){
+          var an = -Math.PI/2 + k*1.2566;
+          x.beginPath();
+          x.arc(M + Math.cos(an)*M*0.55, M + Math.sin(an)*M*0.55, M*0.15, 0, 6.2832);
+          x.fill();
+        }
+        x.globalCompositeOperation = 'source-over';
+      } else {
+        var g = x.createRadialGradient(M, M, 0, M, M, M);       // crisp round dot
+        g.addColorStop(0,    'rgba('+rgb+','+alpha+')');
+        g.addColorStop(0.70, 'rgba('+rgb+','+alpha+')');
+        g.addColorStop(0.93, 'rgba('+rgb+','+(alpha*0.42)+')');
+        g.addColorStop(1,    'rgba('+rgb+',0)');
+        x.fillStyle = g; x.fillRect(0,0,SPR_PX,SPR_PX);
+      }
+      return c;
+    }
+    var SPR_SA = [], SPR_W = [];
+    (function buildSprites(){
+      for (var s=0; s<SPR_N; s++){
+        var al = (s+1)/SPR_N;
+        SPR_SA.push(makeSprite('150,195,255', al, GLYPH));
+        SPR_W.push(makeSprite('95,160,235',  al, GLYPH));
+      }
+    })();
+    var SPR_SCALE = (GLYPH === 'dot') ? 2.35 : 3.1;             // glyphs need more room to read
+    function blit(px, py, size, a, isSA){
+      if (a <= 0.02) return;
+      var bi = (a >= 1) ? SPR_N-1 : (a*SPR_N)|0;
+      if (bi >= SPR_N) bi = SPR_N-1;
+      var d = size * SPR_SCALE;
+      ctx.drawImage(isSA ? SPR_SA[bi] : SPR_W[bi], px - d*0.5, py - d*0.5, d, d);
+    }
     // ---- lat/long graticule (gives the rotation a readable frame) ----
     function projPt(lon,lat,cs,sn,scale){
       var phi=(90-lat)*Math.PI/180, th=(lon+180)*Math.PI/180;
@@ -3275,9 +3331,7 @@ window.GATE_PTS=[62.1,31.4,0,62.6,33.2,0,63.0,35.1,0,64.8,30.3,0,64.9,32.9,0,64.
         if(z2>=0){ a=(isSA?1.0:0.9)*(0.42+depth*0.66); }
         else     { a=(isSA?0.28:0.16)*(0.25+depth*0.55); }
         a*=fade;
-        ctx.fillStyle = isSA ? 'rgba(150,195,255,'+a+')' : 'rgba(95,160,235,'+a+')';
-        var s2=size*1.772;                    // equal-area square: much cheaper than arc()
-        ctx.fillRect(px-s2*0.5, py-s2*0.5, s2, s2);
+        blit(px, py, size, a, isSA);
       }
     }
     function drawCities(cs,sn,scale,fade){
@@ -3349,10 +3403,7 @@ window.GATE_PTS=[62.1,31.4,0,62.6,33.2,0,63.0,35.1,0,64.8,30.3,0,64.9,32.9,0,64.
           var isSA=sa[i];
           var size=(isSA?2.0:1.5)*DPR*sz[i]*(0.6+depth*0.8)*(1+be*3.0);
           var a=(isSA?1.0:0.9)*(0.5+depth*0.6)*(1-bp*0.45);
-          if(isSA){ ctx.fillStyle='rgba(170,212,255,'+a+')'; }
-          else    { ctx.fillStyle='rgba(110,178,248,'+a+')'; }
-          var bs=size*1.772;
-          ctx.fillRect(px-bs*0.5, py-bs*0.5, bs, bs);
+          blit(px, py, size, a, isSA);
         }
         drawLimb(1+be*1.4, Math.max(0,1-bp*1.15));
         drawCities(cs,sn,1+be*2.2,1-bp*0.65);
