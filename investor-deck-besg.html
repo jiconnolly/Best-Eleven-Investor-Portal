@@ -3241,8 +3241,8 @@ window.GATE_PTS=[62.1,31.4,0,62.6,33.2,0,63.0,35.1,0,64.8,30.3,0,64.9,32.9,0,64.
     var pts=window.GATE_PTS, N0=pts.length/3;
     // densify: each source point spawns DENS dots (original + jittered neighbours)
     // phones keep the original spacing: the globe is smaller there, so dots would crowd
-    var DENS=(window.innerWidth<820 ? 1 : 2), N=N0*DENS;
-    var RJ=0.85;                                  // degrees: extra dots sit on an even ring,
+    var DENS=(window.innerWidth<820 ? 1 : 4), N=N0*DENS;
+    var RJ=(DENS===1 ? 0 : 0.40);                 // degrees: dots sit evenly on a small ring,
     var vx=new Float32Array(N), vy=new Float32Array(N), vz=new Float32Array(N),
         sa=new Uint8Array(N), sz=new Float32Array(N);
     var kk=0;
@@ -3252,7 +3252,7 @@ window.GATE_PTS=[62.1,31.4,0,62.6,33.2,0,63.0,35.1,0,64.8,30.3,0,64.9,32.9,0,64.
       var shrink=Math.max(0.25, Math.cos(blat*Math.PI/180));
       for(var d=0;d<DENS;d++){
         var lon=blon, lat=blat;
-        if(d){ var an=base+d*(6.2832/DENS); lon+=Math.cos(an)*RJ/shrink; lat+=Math.sin(an)*RJ; }
+        if(DENS>1){ var an=base+d*(6.2832/DENS); lon+=Math.cos(an)*RJ/shrink; lat+=Math.sin(an)*RJ; }
         var phi=(90-lat)*Math.PI/180, th=(lon+180)*Math.PI/180;
         vx[kk]=-Math.sin(phi)*Math.cos(th); vy[kk]=Math.cos(phi); vz[kk]=Math.sin(phi)*Math.sin(th);
         sa[kk]=bsa; sz[kk]=1;                     // every dot exactly the same size
@@ -3397,7 +3397,7 @@ window.GATE_PTS=[62.1,31.4,0,62.6,33.2,0,63.0,35.1,0,64.8,30.3,0,64.9,32.9,0,64.
     function drawPoints(cs,sn,side,scale,fade,be){
       scale=scale||1; fade=(fade===undefined?1:fade); be=be||0;
       // dot size follows the globe radius so spacing/size stay balanced on any screen
-      var kdot=((DENS===1?8.95:4.2)*(R/DPR))/1612;
+      var kdot=((DENS===1?8.95:2.9)*(R/DPR))/1612;
       for(var i=0;i<N;i++){
         var x=vx[i], y=vy[i], z=vz[i];
         var x1=x*cs+z*sn, z1=-x*sn+z*cs;
@@ -3470,7 +3470,7 @@ window.GATE_PTS=[62.1,31.4,0,62.6,33.2,0,63.0,35.1,0,64.8,30.3,0,64.9,32.9,0,64.
         var be=bp*bp;                          // outward blast (delayed, accelerating)
         spin -= 0.0050 + 0.30*bp;              // wheel-spin: accelerates from the first frame
         var cs=Math.cos(spin), sn=Math.sin(spin);
-        var kdot=((DENS===1?8.95:4.2)*(R/DPR))/1612;
+        var kdot=((DENS===1?8.95:2.9)*(R/DPR))/1612;
         var gf=Math.max(0,1-bp*2.6);           // graticule dies fast once it blows
         drawHalo(1+be*1.4, Math.max(0,1-bp*0.9));
         if(gf>0.01){ drawGraticule(cs,sn,1+be*0.6,gf,-1); drawGraticule(cs,sn,1+be*0.6,gf,1); }
