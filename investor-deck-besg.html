@@ -2473,8 +2473,9 @@ section.fx-in::before{opacity:1;}
 
         <div style="margin-top:2rem; padding:1.5rem; background:rgba(201,169,97,0.07); border:1px solid rgba(201,169,97,0.2);">
           <div style="font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem;">Group Revenue Target</div>
-          <div id="askRevenueTarget" style="font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:300;color:var(--gold);line-height:1;" data-full="$31M+" data-sport="$29M+">$31M+</div>
-          <div style="font-size:0.75rem;color:var(--ink-m);margin-top:0.3rem;">Annual group revenue by 2031 across all clubs and verticals</div>
+          <div id="askRevenueTarget" style="font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:300;color:var(--gold);line-height:1;" data-full="$22M" data-sport="$21M">$22M</div>
+          <div id="askRevenueTargetSub" style="font-size:0.75rem;color:var(--ink-m);margin-top:0.3rem;" data-full="Annual club revenue attributable to BESG by 2031, net of ownership shares, including facility rental income." data-sport="Annual club revenue attributable to BESG by 2031, net of ownership shares. No facility income, since no real estate is acquired.">Annual club revenue attributable to BESG by 2031, net of ownership shares, including facility rental income.</div>
+          <div id="askRevenueLogic" style="font-size:0.7rem;color:var(--ink-m);line-height:1.65;margin-top:0.9rem;padding-top:0.9rem;border-top:1px solid rgba(201,169,97,0.18);" data-full="How it is built: Lito ~$12.1M × 100%, Colegiales ~$7M × 70%, Rubio Ñu ~$10.5M × 50%. The reduced shares apply only after each club's investment is recovered, targeted for the start of 2030. Figures are incremental: base squad costs are not charged against them, and the TV income that offsets those costs is excluded." data-sport="How it is built: Lito ~$11.3M × 100%, Colegiales ~$6.5M × 70%, Rubio Ñu ~$10.5M × 50%. Same ownership and recovery mechanics as the Full Platform plan, with facility rental income excluded because no real estate is acquired. Figures are incremental: base squad costs are not charged against them, and the TV income that offsets those costs is excluded.">How it is built: Lito ~$12.1M × 100%, Colegiales ~$7M × 70%, Rubio Ñu ~$10.5M × 50%. The reduced shares apply only after each club's investment is recovered, targeted for the start of 2030. Figures are incremental: base squad costs are not charged against them, and the TV income that offsets those costs is excluded.</div>
         </div>
         <div style="background:rgba(201,169,97,0.06);border:1px solid rgba(201,169,97,0.2);padding:1.5rem;margin-top:1.2rem;">
           <div style="font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem;">Additional Return · Player Investments</div>
@@ -2482,9 +2483,10 @@ section.fx-in::before{opacity:1;}
           <div style="font-size:0.75rem;color:var(--ink-m);margin-top:0.3rem;">Projected proceeds from the $2M player-investment pool, on top of each club's own sales pipeline.</div>
         </div>
         <div id="askRealEstateBox" style="background:rgba(201,169,97,0.06);border:1px solid rgba(201,169,97,0.2);padding:1.5rem;margin-top:1.2rem;">
-          <div style="font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem;">Real Estate Income &amp; Appreciation</div>
-          <div style="font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:300;color:var(--gold);line-height:1;">$2M+/yr</div>
-          <div style="font-size:0.75rem;color:var(--ink-m);margin-top:0.3rem;">Facility rental income across owned assets, plus land and stadium appreciation, independent of sporting outcomes.</div>
+          <div style="font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem;">Real Estate Revaluation</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:300;color:var(--gold);line-height:1;">100%</div>
+          <div style="font-size:0.75rem;color:var(--ink-m);margin-top:0.3rem;">Targeted revaluation of the $14M real-asset tranche, land, stadiums and training facilities, taking it to $28M of hard BESG balance-sheet assets. Independent of sporting outcomes.</div>
+          <div style="font-size:0.7rem;color:var(--ink-m);line-height:1.65;margin-top:0.9rem;padding-top:0.9rem;border-top:1px solid rgba(201,169,97,0.18);">Rental income from these facilities is already counted inside the group revenue target above, so it is not added twice here. This tranche exists only in the Full Platform plan.</div>
         </div>
         <div style="background:rgba(201,169,97,0.06);border:1px solid rgba(201,169,97,0.25);border-radius:4px;padding:1.2rem 1.5rem;margin-top:1rem;">
           <div style="font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem;">BESG Projected Value 2035</div>
@@ -2661,7 +2663,7 @@ section.fx-in::before{opacity:1;}
     }
 
   function setAskMode(mode) {
-    document.querySelectorAll('#askTotalNum, #askTotalSub, .ask-subtotal, #askCapTotal, #askRevenueTarget, #askProjectedValue, #askProjectedValueSub').forEach(el => {
+    document.querySelectorAll('#askTotalNum, #askTotalSub, .ask-subtotal, #askCapTotal, #askRevenueTarget, #askRevenueTargetSub, #askRevenueLogic, #askProjectedValue, #askProjectedValueSub').forEach(el => {
       const val = el.getAttribute('data-' + mode);
       if (val) el.textContent = val;
     });
