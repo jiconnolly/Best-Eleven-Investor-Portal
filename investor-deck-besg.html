@@ -2452,6 +2452,7 @@ section.fx-in::before{opacity:1;}
       <div>
         <div class="ask-total" id="askTotalNum" data-full="$22.5M" data-sport="$9.2M">$22.5M</div>
         <div class="ask-sub" id="askTotalSub" data-full="Total capital raise · USD" data-sport="Sporting-only raise · USD">Total capital raise · USD</div>
+        <div id="askEquityLine" style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;color:var(--gold);margin-top:0.7rem;letter-spacing:0.01em;" data-full="for 35% equity in Best Eleven Sports Group" data-sport="for 15.2% equity in Best Eleven Sports Group">for 35% equity in Best Eleven Sports Group</div>
 
         <div class="ask-breakdown">
           <div class="ask-club">
@@ -2486,11 +2487,14 @@ section.fx-in::before{opacity:1;}
           <div style="font-size:0.68rem;color:rgba(255,255,255,0.45);padding:0.4rem 0 0.6rem;line-height:1.5;">Flexible acquisition capital, not tied to a single club. Buy in one market, develop, and sell from whichever club maximises value.</div>
           <div class="ask-line total"><span class="ask-line-label">Subtotal</span><span class="ask-line-val">$2M</span></div>
         </div>
-        <div style="background:rgba(201,169,97,0.06);border:1px solid rgba(201,169,97,0.2);padding:1.5rem;margin-top:1.2rem;">
-          <div style="font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem;">Equity Offered</div>
-          <div id="askEquity" style="font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:300;color:var(--gold);line-height:1;" data-full="35%" data-sport="15.2%">35%</div>
-          <div id="askEquitySub" style="font-size:0.75rem;color:var(--ink-m);margin-top:0.3rem;" data-full="Of Best Eleven Sports Group, for USD 22.5M. Direct participation in the group holding entity, not in individual clubs." data-sport="Of Best Eleven Sports Group, for USD 9.2M. Direct participation in the group holding entity, not in individual clubs.">Of Best Eleven Sports Group, for USD 22.5M. Direct participation in the group holding entity, not in individual clubs.</div>
-          <div id="askWaterfall" style="font-size:0.7rem;color:var(--ink-m);line-height:1.65;margin-top:0.9rem;padding-top:0.9rem;border-top:1px solid rgba(201,169,97,0.18);" data-full="Distribution waterfall. 70% of the group&#39;s annual distributable profit goes to the investor until 100% of the capital is returned, targeted for 2031. From that point distributions revert to pro-rata by shareholding, and the stake is retained in full. The return therefore has two components: the capital back, and the shareholding on top of it." data-sport="Distribution waterfall. 70% of the group&#39;s annual distributable profit goes to the investor until 100% of the capital is returned, targeted for 2029, two years earlier than the Full Platform plan because the capital committed is smaller. From that point distributions revert to pro-rata by shareholding, and the stake is retained in full.">Distribution waterfall. 70% of the group&#39;s annual distributable profit goes to the investor until 100% of the capital is returned, targeted for 2031. From that point distributions revert to pro-rata by shareholding, and the stake is retained in full. The return therefore has two components: the capital back, and the shareholding on top of it.</div>
+        <div style="background:linear-gradient(135deg,rgba(201,169,97,0.14),rgba(201,169,97,0.05));border:1px solid rgba(201,169,97,0.45);border-left:3px solid var(--gold);padding:1.6rem;margin-top:1.2rem;box-shadow:0 18px 46px -28px rgba(0,0,0,0.9);">
+          <div style="font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem;">How the investor gets paid</div>
+          <div style="display:flex;align-items:baseline;gap:0.7rem;flex-wrap:wrap;">
+            <div id="askEquity" style="font-family:'Cormorant Garamond',serif;font-size:3.4rem;font-weight:300;color:var(--gold);line-height:1;" data-full="70%" data-sport="70%">70%</div>
+            <div style="font-size:0.9rem;color:var(--ink);line-height:1.35;max-width:22ch;">of the group&#39;s annual distributable profit, until the capital is fully returned</div>
+          </div>
+          <div id="askEquitySub" style="font-size:0.8rem;color:var(--ink);margin-top:1rem;line-height:1.6;" data-full="Accelerated distribution waterfall. The investor takes 70% of BESG&#39;s annual distributable profit ahead of any other distribution, until 100% of the USD 22.5M is back. On the deck&#39;s own projections that point is reached in 2031." data-sport="Accelerated distribution waterfall. The investor takes 70% of BESG&#39;s annual distributable profit ahead of any other distribution, until 100% of the USD 9.2M is back. On the deck&#39;s own projections that point is reached in 2029, two years earlier than the Full Platform plan, because the capital committed is smaller.">Accelerated distribution waterfall. The investor takes 70% of BESG&#39;s annual distributable profit ahead of any other distribution, until 100% of the USD 22.5M is back. On the deck&#39;s own projections that point is reached in 2031.</div>
+          <div id="askWaterfall" style="font-size:0.78rem;color:var(--ink-m);line-height:1.65;margin-top:0.9rem;padding-top:0.9rem;border-top:1px solid rgba(201,169,97,0.28);" data-full="Once the capital is returned the waterfall stops and distributions revert to pro-rata by shareholding. The 35% stake is retained in full throughout and after. The return therefore has two separate components: the capital back by 2031, and the shareholding on top of it." data-sport="Once the capital is returned the waterfall stops and distributions revert to pro-rata by shareholding. The 15.2% stake is retained in full throughout and after. The return therefore has two separate components: the capital back by 2029, and the shareholding on top of it.">Once the capital is returned the waterfall stops and distributions revert to pro-rata by shareholding. The 35% stake is retained in full throughout and after. The return therefore has two separate components: the capital back by 2031, and the shareholding on top of it.</div>
         </div>
         
       </div>
@@ -2731,7 +2735,7 @@ section.fx-in::before{opacity:1;}
     }
 
   function setAskMode(mode) {
-    document.querySelectorAll('#askTotalNum, #askTotalSub, .ask-subtotal, #askCapTotal, #askRevenueTarget, #askRevenueTargetSub, #askRevenueLogic, #askEquity, #askEquitySub, #askWaterfall, #askProjectedValue, #askProjectedValueSub').forEach(el => {
+    document.querySelectorAll('#askTotalNum, #askTotalSub, .ask-subtotal, #askCapTotal, #askRevenueTarget, #askRevenueTargetSub, #askRevenueLogic, #askEquityLine, #askEquity, #askEquitySub, #askWaterfall, #askProjectedValue, #askProjectedValueSub').forEach(el => {
       const val = el.getAttribute('data-' + mode);
       if (val) el.textContent = val;
     });
