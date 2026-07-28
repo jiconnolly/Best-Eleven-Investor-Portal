@@ -2420,7 +2420,7 @@ section.fx-in::before{opacity:1;}
         <span style="width:22px;height:1px;background:var(--gold-d);align-self:center;"></span>
         <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.45rem;font-weight:500;color:var(--gold-b);line-height:1;">Full Platform</span>
       </div>
-      <div style="font-family:'Cormorant Garamond',serif;font-size:2.6rem;font-weight:300;color:var(--ink);line-height:1;margin-bottom:0.8rem;">$22.5M</div>
+      <div style="display:flex;align-items:baseline;gap:0.85rem;flex-wrap:wrap;margin-bottom:0.85rem;"><span style="font-family:'Cormorant Garamond',serif;font-size:2.6rem;font-weight:300;color:var(--ink);line-height:1;">$22.5M</span><span style="font-size:0.72rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-m);align-self:center;">for</span><span style="font-family:'Cormorant Garamond',serif;font-size:2.3rem;font-weight:300;color:var(--gold);line-height:1;">35%</span><span style="font-size:0.72rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold);align-self:center;">equity</span></div>
       <div style="font-size:0.85rem;color:var(--ink-m);line-height:1.6;">Squad budgets plus real estate: stadiums, training facilities and land, building permanent BESG assets across all three clubs.</div>
       <div style="margin-top:1.3rem;font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);">View full breakdown &rarr;</div>
     </div>
@@ -2430,7 +2430,7 @@ section.fx-in::before{opacity:1;}
         <span style="width:22px;height:1px;background:var(--gold-d);align-self:center;"></span>
         <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.45rem;font-weight:500;color:var(--gold-b);line-height:1;">Sporting Performance</span>
       </div>
-      <div style="font-family:'Cormorant Garamond',serif;font-size:2.6rem;font-weight:300;color:var(--ink);line-height:1;margin-bottom:0.8rem;">$9.2M</div>
+      <div style="display:flex;align-items:baseline;gap:0.85rem;flex-wrap:wrap;margin-bottom:0.85rem;"><span style="font-family:'Cormorant Garamond',serif;font-size:2.6rem;font-weight:300;color:var(--ink);line-height:1;">$9.2M</span><span style="font-size:0.72rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-m);align-self:center;">for</span><span style="font-family:'Cormorant Garamond',serif;font-size:2.3rem;font-weight:300;color:var(--gold);line-height:1;">15.2%</span><span style="font-size:0.72rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold);align-self:center;">equity</span></div>
       <div style="font-size:0.85rem;color:var(--ink-m);line-height:1.6;">Pure sporting capital: squad budgets, targeted training-facility improvements and founder milestones only. No real estate acquisition.</div>
       <div style="margin-top:1.3rem;font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);">View full breakdown &rarr;</div>
     </div>
@@ -2451,8 +2451,12 @@ section.fx-in::before{opacity:1;}
     <div class="two-col" style="gap:5rem; align-items:start;">
       <div>
         <div class="ask-total" id="askTotalNum" data-full="$22.5M" data-sport="$9.2M">$22.5M</div>
-        <div class="ask-sub" id="askTotalSub" data-full="Total capital raise · USD" data-sport="Sporting-only raise · USD">Total capital raise · USD</div>
-        <div id="askEquityLine" style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;color:var(--gold);margin-top:0.7rem;letter-spacing:0.01em;" data-full="for 35% equity in Best Eleven Sports Group" data-sport="for 15.2% equity in Best Eleven Sports Group">for 35% equity in Best Eleven Sports Group</div>
+        <div style="display:flex;align-items:baseline;gap:0.7rem;flex-wrap:wrap;margin-top:0.1rem;">
+          <span style="font-size:0.8rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-m);align-self:center;">for</span>
+          <span id="askEquityNum" style="font-family:'Cormorant Garamond',serif;font-size:5.4rem;font-weight:300;color:var(--gold);line-height:0.95;" data-full="35%" data-sport="15.2%">35%</span>
+          <span style="font-size:0.8rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);align-self:center;">equity</span>
+        </div>
+        <div class="ask-sub" id="askTotalSub" data-full="Total capital raise · USD, for a 35% shareholding in Best Eleven Sports Group" data-sport="Sporting-only raise · USD, for a 15.2% shareholding in Best Eleven Sports Group">Total capital raise · USD, for a 35% shareholding in Best Eleven Sports Group</div>
 
         <div class="ask-breakdown">
           <div class="ask-club">
@@ -2735,7 +2739,7 @@ section.fx-in::before{opacity:1;}
     }
 
   function setAskMode(mode) {
-    document.querySelectorAll('#askTotalNum, #askTotalSub, .ask-subtotal, #askCapTotal, #askRevenueTarget, #askRevenueTargetSub, #askRevenueLogic, #askEquityLine, #askEquity, #askEquitySub, #askWaterfall, #askProjectedValue, #askProjectedValueSub').forEach(el => {
+    document.querySelectorAll('#askTotalNum, #askTotalSub, .ask-subtotal, #askCapTotal, #askRevenueTarget, #askRevenueTargetSub, #askRevenueLogic, #askEquityNum, #askEquity, #askEquitySub, #askWaterfall, #askProjectedValue, #askProjectedValueSub').forEach(el => {
       const val = el.getAttribute('data-' + mode);
       if (val) el.textContent = val;
     });
