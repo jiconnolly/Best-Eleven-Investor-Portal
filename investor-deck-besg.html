@@ -3541,17 +3541,31 @@ window.GATE_PTS=[62.1,31.4,0,62.6,33.2,0,63.0,35.1,0,64.8,30.3,0,64.9,32.9,0,64.
     var DPR=Math.min(window.devicePixelRatio||1,2), W=0,H=0,R=0,cx=0,cy=0;
     function placeGlobeCenter(){
       var ball=document.getElementById('gateB11');
-      if(ball){ var b=ball.getBoundingClientRect(); cx=(b.left+b.width/2)*DPR; cy=(b.top+b.height/2)*DPR; }
-      else { cx=cv.width/2; cy=cv.height/2; }
+      var r = cv.getBoundingClientRect();
+      var sx = r.width  ? cv.width  / r.width  : DPR;   // escala real lienzo/pantalla
+      var sy = r.height ? cv.height / r.height : DPR;
+      if(ball){
+        var b=ball.getBoundingClientRect();
+        cx = (b.left + b.width/2  - r.left) * sx;
+        cy = (b.top  + b.height/2 - r.top ) * sy;
+      } else { cx=cv.width/2; cy=cv.height/2; }
     }
     window.__placeGlobeCenter=placeGlobeCenter;
     function resize(){
-      W=Math.max(window.innerWidth,300); H=Math.max(window.innerHeight,300);
-      cv.width=W*DPR; cv.height=H*DPR;
-      R=Math.min(Math.min(W,H),1150)*DPR*0.46;
+      // medir la caja real del contenedor: en iOS Safari 100vh != window.innerHeight,
+      // y usar el segundo estira el lienzo verticalmente
+      var box = wrap.getBoundingClientRect();
+      W = Math.max(box.width  || window.innerWidth,  300);
+      H = Math.max(box.height || window.innerHeight, 300);
+      cv.width  = Math.round(W*DPR);
+      cv.height = Math.round(H*DPR);
+      R = Math.min(Math.min(W,H),1150)*DPR*0.46;
       placeGlobeCenter();
     }
     resize(); window.addEventListener('resize',resize);
+    window.addEventListener('orientationchange', function(){ setTimeout(resize,120); });
+    if(window.visualViewport){ window.visualViewport.addEventListener('resize', resize); }
+    setTimeout(resize, 250); setTimeout(resize, 900);   // iOS ajusta el viewport al ocultar la barra
     setTimeout(function(){ placeGlobeCenter(); }, 120);
     setTimeout(function(){ placeGlobeCenter(); }, 500);
     // orient so South America faces camera initially, tilt a touch
