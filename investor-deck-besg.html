@@ -3525,6 +3525,129 @@ window.GATE_PTS=[62.1,31.4,0,62.6,33.2,0,63.0,35.1,0,64.8,30.3,0,64.9,32.9,0,64.
         ctx.beginPath(); ctx.arc(px,py,rad,0,6.2832); ctx.fill();
       }
     }
+
+    // ================= FX de portada =================
+    // Interruptores: window.GATE_BEAMS=false apaga los haces de estadio,
+    //                window.GATE_PING=false  apaga el ping de radar.
+    var FX_BEAMS = (window.GATE_BEAMS !== false);
+    var FX_PING  = (window.GATE_PING  !== false);
+
+    // ---- haces de estadio ----
+    // Se hornean una vez en un lienzo aparte (a resolucion reducida: son degrades
+    // muy suaves, el escalado no se nota y ahorra memoria en movil) y despues solo
+    // se desplazan, asi el costo por cuadro es un unico drawImage.
+    var beamCv=null, beamSrcW=0, beamSrcH=0, beamKeyH=0, beamKeyW=0;
+    function buildBeams(){
+      var destW=cv.width*1.6, destH=cv.height;
+      var s=Math.min(1, 1500/Math.max(destW,1));
+      beamSrcW=Math.max(2,Math.round(destW*s));
+      beamSrcH=Math.max(2,Math.round(destH*s));
+      var c=document.createElement('canvas'); c.width=beamSrcW; c.height=beamSrcH;
+      var x=c.getContext('2d');
+      var BEAMS=[{p:0.17,w:0.20,a:0.042},{p:0.48,w:0.29,a:0.030},{p:0.79,w:0.17,a:0.038}];
+      x.save();
+      x.translate(beamSrcW*0.5, beamSrcH*0.5);
+      x.rotate(-0.36);                                  // caida diagonal, como reflectores
+      var L=Math.max(beamSrcW,beamSrcH)*2.1;
+      for(var i=0;i<BEAMS.length;i++){
+        var b=BEAMS[i];
+        var bx=(b.p-0.5)*beamSrcW*1.15, wp=b.w*beamSrcW*0.5;
+        var g=x.createLinearGradient(bx-wp,0,bx+wp,0);
+        g.addColorStop(0,   'rgba(201,169,97,0)');
+        g.addColorStop(0.5, 'rgba(214,184,116,'+b.a+')');
+        g.addColorStop(1,   'rgba(201,169,97,0)');
+        x.fillStyle=g; x.fillRect(bx-wp,-L*0.5,wp*2,L);
+      }
+      x.restore();
+      // desvanecer arriba y abajo para que los haces no corten en seco
+      var fd=x.createLinearGradient(0,0,0,beamSrcH);
+      fd.addColorStop(0,'rgba(0,0,0,1)'); fd.addColorStop(0.42,'rgba(0,0,0,0)');
+      fd.addColorStop(0.58,'rgba(0,0,0,0)'); fd.addColorStop(1,'rgba(0,0,0,1)');
+      x.globalCompositeOperation='destination-out';
+      x.fillStyle=fd; x.fillRect(0,0,beamSrcW,beamSrcH);
+      x.globalCompositeOperation='source-over';
+      // ruido fino: rompe el bandeo que sale al pintar degrades a opacidad tan baja
+      var nt=document.createElement('canvas'); nt.width=nt.height=96;
+      var nx=nt.getContext('2d'), id=nx.createImageData(96,96), dd=id.data;
+      for(var k=0;k<dd.length;k+=4){ var v=(Math.random()*255)|0; dd[k]=dd[k+1]=dd[k+2]=v; dd[k+3]=10; }
+      nx.putImageData(id,0,0);
+      x.globalCompositeOperation='overlay';
+      x.fillStyle=x.createPattern(nt,'repeat'); x.fillRect(0,0,beamSrcW,beamSrcH);
+      x.globalCompositeOperation='source-over';
+      beamCv=c; beamKeyH=cv.height; beamKeyW=cv.width;
+    }
+    function drawBeams(fade){
+      if(fade<=0.01) return;
+      if(!beamCv || beamKeyH!==cv.height || beamKeyW!==cv.width) buildBeams();
+      var destW=cv.width*1.6, destH=cv.height;
+      var per=78000;                                    // un ciclo completo: 78 s
+      var off=((performance.now()%per)/per)*(destW-cv.width);
+      ctx.globalAlpha=fade;
+      ctx.drawImage(beamCv, 0,0,beamSrcW,beamSrcH, -off,0, destW,destH);
+      ctx.globalAlpha=1;
+    }
+
+    // ---- ping de radar ----
+    // Cuando la linea del barrido pasa por una ciudad, esa ciudad emite un anillo.
+    // El angulo real se lee de la animacion del SVG, no se reimplementa el reloj.
+    var sweepEl=null, lastSweep=-1, pings=[], cityAng=new Float32Array(4);
+    var SWEEP_LEAD=-65.98;                              // direccion de la linea brillante
+    function sweepDeg(){
+      if(!sweepEl) sweepEl=document.getElementById('radarSweep');
+      if(!sweepEl) return null;
+      var a=null;
+      if(sweepEl.getAnimations){ var l=sweepEl.getAnimations(); if(l&&l.length) a=l[0]; }
+      if(a && a.currentTime!=null) return ((a.currentTime%9000)/9000)*360;
+      var m=getComputedStyle(sweepEl).transform;         // respaldo: leer la matriz
+      if(!m || m==='none') return null;
+      var p=m.replace(/matrix\(|\)/g,'').split(',');
+      if(p.length<4) return null;
+      return (Math.atan2(parseFloat(p[1]),parseFloat(p[0]))*180/Math.PI+360)%360;
+    }
+    function updatePings(cs,sn,scale){
+      var sd=sweepDeg(); if(sd===null) return;           // sin barrido (reduced-motion) no hay ping
+      var lead=(SWEEP_LEAD+sd+720)%360;
+      for(var q=0;q<4;q++){
+        var x=cx3[q],y=cy3[q],z=cz3[q];
+        var x1=x*cs+z*sn, z1=-x*sn+z*cs;
+        var y2=y*C1 - z1*S1, z2=y*S1 + z1*C1;
+        if(z2<-0.05){ cityAng[q]=-999; continue; }       // ciudad detras del globo
+        var px=cx + x1*R*scale, py=cy - y2*R*scale;
+        cityAng[q]=(Math.atan2(py-cy,px-cx)*180/Math.PI+360)%360;
+      }
+      if(lastSweep>=0){
+        var swept=(lead-lastSweep+360)%360;
+        if(swept<90){                                    // descartar el salto de vuelta
+          for(var q2=0;q2<4;q2++){
+            if(cityAng[q2]<-900) continue;
+            if(((cityAng[q2]-lastSweep+360)%360)<=swept) pings.push({q:q2,t:performance.now()});
+          }
+        }
+      }
+      lastSweep=lead;
+    }
+    window.__gatePings=pings;                            // handle de diagnostico
+    var PING_MS=1500;
+    function drawPings(cs,sn,scale,fade){
+      if(!pings.length) return;
+      var now=performance.now();
+      for(var i=pings.length-1;i>=0;i--){
+        var p=pings[i], k=(now-p.t)/PING_MS;
+        if(k>=1){ pings.splice(i,1); continue; }
+        var q=p.q, x=cx3[q],y=cy3[q],z=cz3[q];
+        var x1=x*cs+z*sn, z1=-x*sn+z*cs;
+        var y2=y*C1 - z1*S1, z2=y*S1 + z1*C1;
+        if(z2<-0.1) continue;
+        var vis=Math.max(0,Math.min(1,(z2+0.1)/0.45))*fade;
+        if(vis<=0.01) continue;
+        var px=cx + x1*R*scale, py=cy - y2*R*scale;
+        var ease=1-Math.pow(1-k,2.2);
+        ctx.lineWidth=1.25*DPR;
+        ctx.strokeStyle='rgba(226,196,122,'+((1-k)*(1-k)*0.55*vis)+')';
+        ctx.beginPath(); ctx.arc(px,py,(3.1*DPR)*(1.2+ease*7.5),0,6.2832); ctx.stroke();
+      }
+    }
+
     var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     // explosion state
     var boom=false, boomT=0, BOOM_MS=1400;
@@ -3579,6 +3702,7 @@ window.GATE_PTS=[62.1,31.4,0,62.6,33.2,0,63.0,35.1,0,64.8,30.3,0,64.9,32.9,0,64.
         var cs=Math.cos(spin), sn=Math.sin(spin);
         var kdot=((LOWRES?8.95:2.5)*(R/DPR))/1612;
         var gf=Math.max(0,1-bp*2.6);           // graticule dies fast once it blows
+        if(FX_BEAMS) drawBeams(Math.max(0,1-bp*1.8));
         drawHalo(1+be*1.4, Math.max(0,1-bp*0.9));
         if(gf>0.01){ drawGraticule(cs,sn,1+be*0.6,gf,-1); drawGraticule(cs,sn,1+be*0.6,gf,1); }
         for(var i=0;i<N;i++){
@@ -3596,10 +3720,12 @@ window.GATE_PTS=[62.1,31.4,0,62.6,33.2,0,63.0,35.1,0,64.8,30.3,0,64.9,32.9,0,64.
         }
         drawLimb(1+be*1.4, Math.max(0,1-bp*1.15));
         drawCities(cs,sn,1+be*2.2,1-bp*0.65);
+        if(FX_PING) drawPings(cs,sn,1+be*2.2,Math.max(0,1-bp*1.6));
         requestAnimationFrame(frame); return;
       }
       spin -= 0.0050;             // rotate America -> Europe (east)
       var cs=Math.cos(spin), sn=Math.sin(spin);
+      if(FX_BEAMS) drawBeams(1);
       // faint sphere haze
       var g=ctx.createRadialGradient(cx,cy,R*0.2,cx,cy,R*1.15);
       g.addColorStop(0,'rgba(46,110,190,0.10)');
@@ -3613,6 +3739,7 @@ window.GATE_PTS=[62.1,31.4,0,62.6,33.2,0,63.0,35.1,0,64.8,30.3,0,64.9,32.9,0,64.
       drawPoints(cs,sn,1,1,1,0);
       drawLimb(1,1);
       drawCities(cs,sn,1,1);
+      if(FX_PING){ updatePings(cs,sn,1); drawPings(cs,sn,1,1); }
       requestAnimationFrame(frame);
     }
     requestAnimationFrame(frame);
