@@ -3529,53 +3529,9 @@ window.GATE_PTS=[62.1,31.4,0,62.6,33.2,0,63.0,35.1,0,64.8,30.3,0,64.9,32.9,0,64.
       }
     }
     // ================= FX de portada =================
-    // Interruptores: window.GATE_BEAMS=false apaga los haces; window.GATE_PING=false, el ping.
-    var FX_BEAMS=(window.GATE_BEAMS!==false), FX_PING=(window.GATE_PING!==false);
+    // Interruptor: window.GATE_PING=false apaga el ping.
+    var FX_PING=(window.GATE_PING!==false);
 
-    // ---- haces de estadio ----
-    // Se hornean una vez en un lienzo aparte y despues solo se desplazan: el costo
-    // por cuadro es un unico drawImage, no tres degrades.
-    var beamCv=null, beamKeyW=0, beamKeyH=0, beamSrcW=0, beamSrcH=0;
-    function buildBeams(){
-      var destW=cv.width*1.6, destH=cv.height;
-      var s=Math.min(1, 1500/Math.max(destW,1));          // los degrades son suaves: basta baja res
-      beamSrcW=Math.max(2,Math.round(destW*s)); beamSrcH=Math.max(2,Math.round(destH*s));
-      var c=document.createElement('canvas'); c.width=beamSrcW; c.height=beamSrcH;
-      var x=c.getContext('2d');
-      var B=[{p:0.17,w:0.20,a:0.042},{p:0.48,w:0.29,a:0.030},{p:0.79,w:0.17,a:0.038}];
-      x.save(); x.translate(beamSrcW*0.5,beamSrcH*0.5); x.rotate(-0.36);
-      var L=Math.max(beamSrcW,beamSrcH)*2.1;
-      for(var i=0;i<B.length;i++){
-        var b=B[i], bx=(b.p-0.5)*beamSrcW*1.15, wp=b.w*beamSrcW*0.5;
-        var g=x.createLinearGradient(bx-wp,0,bx+wp,0);
-        g.addColorStop(0,'rgba(201,169,97,0)');
-        g.addColorStop(0.5,'rgba(214,184,116,'+b.a+')');
-        g.addColorStop(1,'rgba(201,169,97,0)');
-        x.fillStyle=g; x.fillRect(bx-wp,-L*0.5,wp*2,L);
-      }
-      x.restore();
-      var fd=x.createLinearGradient(0,0,0,beamSrcH);      // no cortan en seco arriba/abajo
-      fd.addColorStop(0,'rgba(0,0,0,1)'); fd.addColorStop(0.42,'rgba(0,0,0,0)');
-      fd.addColorStop(0.58,'rgba(0,0,0,0)'); fd.addColorStop(1,'rgba(0,0,0,1)');
-      x.globalCompositeOperation='destination-out'; x.fillStyle=fd; x.fillRect(0,0,beamSrcW,beamSrcH);
-      var nt=document.createElement('canvas'); nt.width=nt.height=96;   // ruido: mata el bandeo
-      var nx=nt.getContext('2d'), id=nx.createImageData(96,96), dd=id.data;
-      for(var k=0;k<dd.length;k+=4){ var v=(Math.random()*255)|0; dd[k]=dd[k+1]=dd[k+2]=v; dd[k+3]=10; }
-      nx.putImageData(id,0,0);
-      x.globalCompositeOperation='overlay';
-      x.fillStyle=x.createPattern(nt,'repeat'); x.fillRect(0,0,beamSrcW,beamSrcH);
-      x.globalCompositeOperation='source-over';
-      beamCv=c; beamKeyW=cv.width; beamKeyH=cv.height;
-    }
-    function drawBeams(t,fade){
-      if(!FX_BEAMS || fade<=0.01) return;
-      if(!beamCv || beamKeyW!==cv.width || beamKeyH!==cv.height) buildBeams();
-      var destW=cv.width*1.6, destH=cv.height, per=78000;
-      var off=((t%per)/per)*(destW-cv.width);            // deriva lentisima
-      ctx.save(); ctx.globalAlpha=fade;
-      ctx.drawImage(beamCv,0,0,beamSrcW,beamSrcH,-off,0,destW,destH);
-      ctx.restore();
-    }
     // ---- ping de deteccion: la ciudad responde cuando la cruza el barrido ----
     var SWEEP_MS=9000, SWEEP_BASE=Math.atan2(-1535,683);
     var sweepEl=null, sweepA0=0, sweepT0=0, sweepOK=false, sweepChk=0;
@@ -3664,9 +3620,6 @@ window.GATE_PTS=[62.1,31.4,0,62.6,33.2,0,63.0,35.1,0,64.8,30.3,0,64.9,32.9,0,64.
     var C1=Math.cos(tilt), S1=Math.sin(tilt);
     function frame(t){
       ctx.clearRect(0,0,cv.width,cv.height);
-      var _bf=1;
-      if(boom) _bf=Math.max(0,1-((performance.now()-boomT)/BOOM_MS)*1.7);
-      drawBeams(t||performance.now(), _bf);
       if(boom){
         var bp=Math.min((performance.now()-boomT)/BOOM_MS,1);
         var be=bp*bp;                          // outward blast (delayed, accelerating)
