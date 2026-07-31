@@ -3777,12 +3777,15 @@ window.GATE_PTS=[62.1,31.4,0,62.6,33.2,0,63.0,35.1,0,64.8,30.3,0,64.9,32.9,0,64.
     var bH=ball.getBoundingClientRect().height;
     var tH=top.getBoundingClientRect().height;
     var oH=bot.getBoundingClientRect().height;
-    var Rnat=Math.min(Math.min(W,H),1150)*0.46;         // radio natural del globo
-    var Rmax=(H - tH - oH - 44)/2;                      // el que deja lugar arriba y abajo
-    var Rcss=Math.max(120, Math.min(Rnat, Rmax));
-    if(Rcss < Rnat - 1){ window.__globeRcap = Rcss; if(window.__globeResize) window.__globeResize(); }
-    else { window.__globeRcap = 0; }
-    var gap=Math.max(12, Rcss - bH/2 + 18);             // despejar el borde del planeta
+    // El globo conserva su tamaño natural: el texto se apoya sobre él, como en la web.
+    // Antes lo achicabamos para que los bloques despejaran el borde, y en pantallas
+    // de laptop eso lo reducia hasta un 43%.
+    var Rnat=Math.min(Math.min(W,H),1150)*0.46;
+    window.__globeRcap = 0;
+    if(window.__globeResize) window.__globeResize();
+    var ideal=Rnat*0.62 - bH/2 + 16;                    // separacion deseada, sin exigir despeje total
+    var libre=(H - tH - oH - bH)/2 - 10;                // lo que el alto realmente permite
+    var gap=Math.max(12, Math.min(ideal, libre));
     top.style.marginBottom=gap+'px';
     bot.style.marginTop=gap+'px';
     if(window.__placeGlobeCenter) window.__placeGlobeCenter();
